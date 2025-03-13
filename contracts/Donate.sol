@@ -39,6 +39,7 @@ contract Donation {
 
     // Each campaign is identified by a unique ID.
     mapping(uint => Campaign) public campaigns;
+    mapping(address => uint[]) public donationTo;
     uint public campaignCount;
     address public admin;
 
@@ -63,7 +64,7 @@ contract Donation {
     event RefundIssued(uint campaignId, address donor, uint amount);
     
     // 1. Organization creates a new campaign.
-    // The organization sets the funding target and the duration fo funding (in seconds) for the campaign.
+    // The organization sets the funding target and the duration fo funding for the campaign.
     // automatically, the created campaign is not open for funding until the admin authorizes (or rejects)
     function createCampaign(
         string memory _name,
@@ -146,7 +147,7 @@ contract Donation {
     
     // 5. Donors contribute to a campaign.
     // Funds are added to the campaign's raised amount and tracked per donor.
-    // funds ar initially held in the contract (escrow)
+    // funds are initially held in the contract (escrow)
     function donate(uint _campaignId) public payable {
         Campaign storage c = campaigns[_campaignId];
         require(c.approved, "Campaign is not approved");
@@ -156,6 +157,9 @@ contract Donation {
 
         if (c.donations[msg.sender] == 0){
             c.donorList.push(msg.sender);
+
+            // First time donating to this campaign, add campaign ID to donor history
+            donationTo[msg.sender].push(_campaignId);
         }
 
         c.raisedAmount += msg.value;
@@ -163,8 +167,36 @@ contract Donation {
 
         emit DonationReceived(_campaignId, msg.sender, msg.value);
     }
+
+    // 6. Get Donated Canpaigns
+    // Returns all the campaigns that a donor donates to
+    function getDoantedCampaigns(address donor) public view returns(CampaignView[] memory donatedCampaigns) {
+        uint[] memory donatedIds = donationTo[donor];
+        uint len = donatedIds.length;
+        donatedCampaigns = new CampaignView[](len);
+
+        for(uint j = 0; j < len; j++){
+            uint campaignId = donatedIds[j];
+            Campaign storage c = campaigns[campaignId];
+            donatedCampaigns[j] = CampaignView({
+                organization: c.organization,
+                    name: c.name,
+                    description: c.description,
+                    targetAmount: c.targetAmount,
+                    targetDate: c.targetDate,
+                    raisedAmount: c.raisedAmount,
+                    fundsReleased: c.fundsReleased,
+                    approved: c.approved,
+                    milestoneIPFSHash: c.milestoneIPFSHash,
+                    status: c.status,
+                    closedForFunding: c.closedForFunding,
+                    isDeleted: c.isDeleted
+            });
+        }
+        return donatedCampaigns;
+    }
     
-    // 6. Release funds if the milestone is achieved.
+    // 7. Release funds if the milestone is achieved.
     // Funds are transferred to the organization.
     function releaseFunds(uint _campaignId) public onlyAdmin {
         Campaign storage c = campaigns[_campaignId];
@@ -181,7 +213,7 @@ contract Donation {
         emit FundsReleased(_campaignId, amount);
     }
 
-    // 7. Get the donors and the corresponding amounts they donated
+    // 8. Get the donors and the corresponding amounts they donated
     // Returns all donors of a campaign and the amounts they donated respectively
     function getDonorsAndAmounts(uint _campaignId) public view returns (address[] memory, uint[] memory) {
         require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
@@ -199,7 +231,7 @@ contract Donation {
         return (donors, amounts);
     }
 
-    // 8. Get all the created campaigns
+    // 9. Get all the created campaigns
     // Returns all the campaigns that have been created
     function getAllCampaigns() public view returns (CampaignView[] memory) {
         // First, count the non-deleted campaigns
@@ -235,7 +267,7 @@ contract Donation {
         return activeCampaigns;
     }
 
-    // 9. Get all the rejected campaigns
+    // 10. Get all the rejected campaigns
     // Returns all the campaigns that were rejected by the admin for some reason
     function getAllRejectedCampaigns() public view returns (CampaignView[] memory) {
         uint rejectedCount = 0;
@@ -273,7 +305,7 @@ contract Donation {
         return rejectedCampaigns;
     }
 
-    // 10. Delete a created campaign
+    // 11. Delete a created campaign
     function deleteCampaign(uint _campaignId) public {
         Campaign storage c = campaigns[_campaignId];
         require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
@@ -282,6 +314,13 @@ contract Donation {
         // delete campaigns[_campaignId]; // Hard Deletion 
         c.isDeleted = true; // Soft Deletion
         emit CampaignDeleted(_campaignId);
+    }
+
+    // 12. Check Amount
+    // check the amount that is donated to a particular campaign by a donor 
+    function checkAmount(uint _campaignId, address donor) public view returns (uint) {
+        Campaign storage c = campaigns[_campaignId];
+        return c.donations[donor];
     }
 
     receive() external payable {}
