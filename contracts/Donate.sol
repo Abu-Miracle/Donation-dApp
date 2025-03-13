@@ -103,16 +103,16 @@ contract Donation {
         uint _targetDate,
         string memory _milestoneIPFSHash
     ) public { 
-        Campaign storage c = campaigns[_campaignId];
-        require(c.organization == msg.sender, "Cannot update campaign, not authorized");
+        Campaign storage campaignStorage = campaigns[_campaignId];
+        require(campaignStorage.organization == msg.sender, "Cannot update campaign, not authorized");
         require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
-        require(c.approved == false, "Campaign has been approved");
+        require(campaignStorage.approved == false, "Campaign has been approved");
 
-        c.name = _name;
-        c.description = _description;
-        c.targetAmount = _targetAmount;
-        c.targetDate = _targetDate;
-        c.milestoneIPFSHash = _milestoneIPFSHash;
+        campaignStorage.name = _name;
+        campaignStorage.description = _description;
+        campaignStorage.targetAmount = _targetAmount;
+        campaignStorage.targetDate = _targetDate;
+        campaignStorage.milestoneIPFSHash = _milestoneIPFSHash;
 
         emit CampaignUpdated(_campaignId);
     }
@@ -120,15 +120,15 @@ contract Donation {
     // 3. Approve Campaign
     // Admin approves the campaign after reviewing details including the milestone document
     function approveCampaign(uint _campaignId) public onlyAdmin {
-        Campaign storage c = campaigns[_campaignId];
+        Campaign storage campaignStorage = campaigns[_campaignId];
         require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
-        require(c.isDeleted == false, "Cannot approve deleted campaign");
-        require(!c.approved, "Campaign already approved");
-        require(c.status == CampaignStatus.Pending, "Campaign already processed");
+        require(campaignStorage.isDeleted == false, "Cannot approve deleted campaign");
+        require(!campaignStorage.approved, "Campaign already approved");
+        require(campaignStorage.status == CampaignStatus.Pending, "Campaign already processed");
 
-        c.approved = true;
-        c.closedForFunding = false; // Now open for funding
-        c.status = CampaignStatus.Approved;
+        campaignStorage.approved = true;
+        campaignStorage.closedForFunding = false; // Now open for funding
+        campaignStorage.status = CampaignStatus.Approved;
 
         emit CampaignApproved(_campaignId);
     }
@@ -136,12 +136,12 @@ contract Donation {
     // 4. Reject Campaign
     // Admin rejexts a campaign after reviewing the details including milestone document
     function rejectCampaign (uint _campaignId, string memory _reason) public onlyAdmin {
-        Campaign storage c = campaigns[_campaignId];
+        Campaign storage campaignStorage = campaigns[_campaignId];
         require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
-        require(!c.approved, "Campaign already approved");
-        require(c.status == CampaignStatus.Pending, "Campaign already processed");
+        require(!campaignStorage.approved, "Campaign already approved");
+        require(campaignStorage.status == CampaignStatus.Pending, "Campaign already processed");
         
-        c.status = CampaignStatus.Rejected;
+        campaignStorage.status = CampaignStatus.Rejected;
         emit CampaignRejected(_campaignId, _reason);
     }
     
@@ -149,21 +149,21 @@ contract Donation {
     // Funds are added to the campaign's raised amount and tracked per donor.
     // funds are initially held in the contract (escrow)
     function donate(uint _campaignId) public payable {
-        Campaign storage c = campaigns[_campaignId];
-        require(c.approved, "Campaign is not approved");
-        require(block.timestamp < c.targetDate, "Campaign deadline passed");
+        Campaign storage campaignStorage = campaigns[_campaignId];
+        require(campaignStorage.approved, "Campaign is not approved");
+        require(block.timestamp < campaignStorage.targetDate, "Campaign deadline passed");
         require(msg.value > 0, "Donation must be greater than zero");
-        require(msg.sender != c.organization, "Cannot donate to your own campaign");
+        require(msg.sender != campaignStorage.organization, "Cannot donate to your own campaign");
 
-        if (c.donations[msg.sender] == 0){
-            c.donorList.push(msg.sender);
+        if (campaignStorage.donations[msg.sender] == 0){
+            campaignStorage.donorList.push(msg.sender);
 
             // First time donating to this campaign, add campaign ID to donor history
             donationTo[msg.sender].push(_campaignId);
         }
 
-        c.raisedAmount += msg.value;
-        c.donations[msg.sender] += msg.value;
+        campaignStorage.raisedAmount += msg.value;
+        campaignStorage.donations[msg.sender] += msg.value; 
 
         emit DonationReceived(_campaignId, msg.sender, msg.value);
     }
@@ -177,20 +177,20 @@ contract Donation {
 
         for(uint j = 0; j < len; j++){
             uint campaignId = donatedIds[j];
-            Campaign storage c = campaigns[campaignId];
+            Campaign storage campaignStorage = campaigns[campaignId];
             donatedCampaigns[j] = CampaignView({
-                organization: c.organization,
-                    name: c.name,
-                    description: c.description,
-                    targetAmount: c.targetAmount,
-                    targetDate: c.targetDate,
-                    raisedAmount: c.raisedAmount,
-                    fundsReleased: c.fundsReleased,
-                    approved: c.approved,
-                    milestoneIPFSHash: c.milestoneIPFSHash,
-                    status: c.status,
-                    closedForFunding: c.closedForFunding,
-                    isDeleted: c.isDeleted
+                organization: campaignStorage.organization,
+                    name: campaignStorage.name,
+                    description: campaignStorage.description,
+                    targetAmount: campaignStorage.targetAmount,
+                    targetDate: campaignStorage.targetDate,
+                    raisedAmount: campaignStorage.raisedAmount,
+                    fundsReleased: campaignStorage.fundsReleased,
+                    approved: campaignStorage.approved,
+                    milestoneIPFSHash: campaignStorage.milestoneIPFSHash,
+                    status: campaignStorage.status,
+                    closedForFunding: campaignStorage.closedForFunding,
+                    isDeleted: campaignStorage.isDeleted
             });
         }
         return donatedCampaigns;
@@ -199,15 +199,15 @@ contract Donation {
     // 7. Release funds if the milestone is achieved.
     // Funds are transferred to the organization.
     function releaseFunds(uint _campaignId) public onlyAdmin {
-        Campaign storage c = campaigns[_campaignId];
-        require(c.approved, "Milestone not achieved");
-        require(!c.fundsReleased, "Funds already released");
-        require(block.timestamp >= c.targetDate, "Target date is not yet reached");
+        Campaign storage campaignStorage = campaigns[_campaignId];
+        require(campaignStorage.approved, "Milestone not achieved");
+        require(!campaignStorage.fundsReleased, "Funds already released");
+        require(block.timestamp >= campaignStorage.targetDate, "Target date is not yet reached");
 
-        c.fundsReleased = true;
-        uint amount = c.raisedAmount;
-        c.raisedAmount = 0; // Reset raised amount to prevent re-entrancy
-        (bool sent, ) = c.organization.call{value: amount}("");
+        campaignStorage.fundsReleased = true;
+        uint amount = campaignStorage.raisedAmount;
+        campaignStorage.raisedAmount = 0; // Reset raised amount to prevent re-entrancy
+        (bool sent, ) = campaignStorage.organization.call{value: amount}("");
         require(sent, "Failed to send funds");
 
         emit FundsReleased(_campaignId, amount);
@@ -217,16 +217,16 @@ contract Donation {
     // Returns all donors of a campaign and the amounts they donated respectively
     function getDonorsAndAmounts(uint _campaignId) public view returns (address[] memory, uint[] memory) {
         require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
-        Campaign storage c = campaigns[_campaignId];
-        uint donorCount = c.donorList.length;
+        Campaign storage campaignStorage = campaigns[_campaignId];
+        uint donorCount = campaignStorage.donorList.length;
         
         address[] memory donors = new address[](donorCount);
         uint[] memory amounts = new uint[](donorCount);
         
         for (uint i = 0; i < donorCount; i++) {
-            address donor = c.donorList[i];
+            address donor = campaignStorage.donorList[i];
             donors[i] = donor;
-            amounts[i] = c.donations[donor];
+            amounts[i] = campaignStorage.donations[donor];
         }  
         return (donors, amounts);
     }
@@ -246,20 +246,20 @@ contract Donation {
         uint j = 0;
         for (uint i = 1; i <= campaignCount; i++) {
             if (!campaigns[i].isDeleted) {
-                Campaign storage c = campaigns[i];
+                Campaign storage campaignStorage = campaigns[i];
                 activeCampaigns[j] = CampaignView({
-                    organization: c.organization,
-                    name: c.name,
-                    description: c.description,
-                    targetAmount: c.targetAmount,
-                    targetDate: c.targetDate,
-                    raisedAmount: c.raisedAmount,
-                    fundsReleased: c.fundsReleased,
-                    approved: c.approved,
-                    milestoneIPFSHash: c.milestoneIPFSHash,
-                    status: c.status,
-                    closedForFunding: c.closedForFunding,
-                    isDeleted: c.isDeleted
+                    organization: campaignStorage.organization,
+                    name: campaignStorage.name,
+                    description: campaignStorage.description,
+                    targetAmount: campaignStorage.targetAmount,
+                    targetDate: campaignStorage.targetDate,
+                    raisedAmount: campaignStorage.raisedAmount,
+                    fundsReleased: campaignStorage.fundsReleased,
+                    approved: campaignStorage.approved,
+                    milestoneIPFSHash: campaignStorage.milestoneIPFSHash,
+                    status: campaignStorage.status,
+                    closedForFunding: campaignStorage.closedForFunding,
+                    isDeleted: campaignStorage.isDeleted
                 });
                 j++;
             }
@@ -284,20 +284,20 @@ contract Donation {
         // Loop again and add the rejected campaigns to the array
         for (uint i = 1; i <= campaignCount; i++) {
             if (campaigns[i].status == CampaignStatus.Rejected) {
-                Campaign storage c = campaigns[i];
+                Campaign storage campaignStorage = campaigns[i];
                 rejectedCampaigns[j] = CampaignView({
-                    organization: c.organization,
-                    name: c.name,
-                    description: c.description,
-                    targetAmount: c.targetAmount,
-                    targetDate: c.targetDate,
-                    raisedAmount: c.raisedAmount,
-                    fundsReleased: c.fundsReleased,
-                    milestoneIPFSHash: c.milestoneIPFSHash,
-                    approved: c.approved,
-                    status: c.status,
-                    closedForFunding: c.closedForFunding,
-                    isDeleted: c.isDeleted
+                    organization: campaignStorage.organization,
+                    name: campaignStorage.name,
+                    description: campaignStorage.description,
+                    targetAmount: campaignStorage.targetAmount,
+                    targetDate: campaignStorage.targetDate,
+                    raisedAmount: campaignStorage.raisedAmount,
+                    fundsReleased: campaignStorage.fundsReleased,
+                    milestoneIPFSHash: campaignStorage.milestoneIPFSHash,
+                    approved: campaignStorage.approved,
+                    status: campaignStorage.status,
+                    closedForFunding: campaignStorage.closedForFunding,
+                    isDeleted: campaignStorage.isDeleted
                 });
                 j++;
             }
@@ -307,20 +307,20 @@ contract Donation {
 
     // 11. Delete a created campaign
     function deleteCampaign(uint _campaignId) public {
-        Campaign storage c = campaigns[_campaignId];
+        Campaign storage campaignStorage = campaigns[_campaignId];
         require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
-        require(c.organization == msg.sender || admin == msg.sender , "Cannot delete campaign, not authorized");
+        require(campaignStorage.organization == msg.sender || admin == msg.sender , "Cannot delete campaign, not authorized");
 
         // delete campaigns[_campaignId]; // Hard Deletion 
-        c.isDeleted = true; // Soft Deletion
+        campaignStorage.isDeleted = true; // Soft Deletion
         emit CampaignDeleted(_campaignId);
     }
 
     // 12. Check Amount
     // check the amount that is donated to a particular campaign by a donor 
     function checkAmount(uint _campaignId, address donor) public view returns (uint) {
-        Campaign storage c = campaigns[_campaignId];
-        return c.donations[donor];
+        Campaign storage campaignStorage = campaigns[_campaignId];
+        return campaignStorage.donations[donor];
     }
 
     receive() external payable {}
