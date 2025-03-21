@@ -18,6 +18,22 @@ body::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
 
+input[type="date"] {
+  appearance: none;         /* Remove native styling */
+  -webkit-appearance: none; /* For Chrome and Safari */
+  padding: 12px 24px;
+  background: url('/donation-dapp/public/calendar.svg') no-repeat right center;
+  background-size: 20px 20px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(50%);
+}
+
+input[type="date"]::-webkit-datetime-edit {
+  color: #747474;
+}
+
 @keyframes slideDown {
   0% { transform: translateY(-20px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
