@@ -7,6 +7,22 @@
   --light-blue: #5ECCF4;
 }
 
-body {
+html, body {
+  overflow: auto;
   font-family: 'Inter', sans-serif;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+body::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out;
 }

@@ -1,13 +1,13 @@
 'use client';
 
-import Image from "next/image";
 import HeroSection from "../components/HeroSection";
 import HowItWorks from "../components/HowItWorks";
-
+import Link from "next/link";
+import "./globals.css";
 
 export default function Home() {
   return (
-    <div>
+    <div className="overflow-hidden">  
       <HeroSection />
       <HowItWorks />
     </div> 
