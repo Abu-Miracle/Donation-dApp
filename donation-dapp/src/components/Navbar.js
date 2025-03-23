@@ -4,9 +4,18 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const { address, isConnected } = useAccount();
+  const adminAddress = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
+  const isAdmin = isConnected && address?.toLowerCase() === adminAddress?.toLowerCase();
+
+  // Define the common navigation items for regular users.
+  const navLinks = ['Home', 'Created Campaigns', 'Donation History'];
+
 
   return (
     <nav className="relative flex justify-between items-center pt-7 px-4 pb-4 lg:px-20 bg-transparent text-white ">
@@ -26,7 +35,7 @@ export default function Navbar() {
 
       {/* Desktop Navigation */}
       <div className="hidden lg:flex items-center gap-6 lg:gap-8">
-        {['Home', 'Created Campaigns', 'Donation History'].map((item, index) => (
+        {navLinks.map((item, index) => (
           <Link
             key={index}
             href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`}
@@ -35,6 +44,15 @@ export default function Navbar() {
             {item}
           </Link>
         ))}
+        {/* Conditionally render the Admin link if the connected user is admin */}
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className="text-lg font-semibold hover:text-[var(--sblue)] transition-all duration-300 hover:scale-105"
+          >
+            Admin
+          </Link>
+        )}
         <ConnectButton />
       </div>
 
@@ -63,7 +81,7 @@ export default function Navbar() {
 
           {/* Menu */}
           <div className="fixed top-16 left-0 w-full bg-black z-50 py-6 shadow-lg flex flex-col items-center gap-6">
-            {['Home', 'Created Campaigns', 'Donation History'].map((item, index) => (
+            {navLinks.map((item, index) => (
               <Link
                 key={index}
                 href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`}
@@ -73,6 +91,15 @@ export default function Navbar() {
                 {item}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="text-xl font-semibold text-white hover:text-[var(--sblue)]"
+                onClick={() => setMenuOpen(false)}
+              >
+                Admin
+              </Link>
+            )}
           </div>
         </>
       )}

@@ -5,6 +5,8 @@
   --sblue: #3CA8CF;
   --bold-blue: #2a7a9c; /* Optional: darker shade for bold text */
   --light-blue: #5ECCF4;
+  --dark-gray: #0E0E0E;
+  --light-gray: #747474;
 }
 
 html, body {
