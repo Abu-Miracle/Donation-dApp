@@ -3,7 +3,7 @@
 import Navbar from '../../components/Navbar';
 import { useState, useEffect } from 'react';
 import { useReadContract } from 'wagmi';
-import abi from "../abi/abi..json";
+import abi from "../abi/abi.json";
 import { ethers } from 'ethers';
 import Image from 'next/image';
 

@@ -5,7 +5,7 @@ import { useWriteContract } from 'wagmi';
 import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
 import "../globals.css";
-import abi from '../abi/abi..json';
+import abi from '../abi/abi.json';
 import { uploadFileToIPFS } from './pinataHelper';
 
 

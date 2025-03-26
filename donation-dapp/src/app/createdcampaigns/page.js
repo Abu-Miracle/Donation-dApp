@@ -4,9 +4,10 @@ import Navbar from '../../components/Navbar';
 import "../globals.css";
 import { useState, useEffect } from 'react';
 import { useReadContract, useAccount } from 'wagmi';
-import abi from "../abi/abi..json";
+import abi from "../abi/abi.json";
 import { ethers } from 'ethers';
 import Image from 'next/image';
+import Link from 'next/link';
 import CampaignOptions from "../../components/CampaignOptions";
 
 export default function CreatedCampaigns() {
@@ -141,7 +142,10 @@ export default function CreatedCampaigns() {
                             by <span className='font-extrabold'> {truncateAddress(campaign.organization)}</span>
                             </p>
 
-                            {campaign.approved ? <button className="text-[var(--sblue)] mt-2 cursor-pointer">See full details</button> :
+                            {campaign.approved ? 
+                            <Link href={`/createdcampaigns/${campaign.id}`}>
+                                <button className="text-[var(--sblue)] mt-2 cursor-pointer">See full details</button>
+                            </Link> :
                             <Image
                                 src="/locked.svg"
                                 alt="Locked"

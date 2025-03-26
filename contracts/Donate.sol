@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 contract Donation {
 
     struct Campaign {
+        uint id;
         address payable organization;
         string name;
         string description;
@@ -12,6 +13,7 @@ contract Donation {
         uint raisedAmount;
         bool fundsReleased;
         string milestoneIPFSHash; // IPFS hash of the milestone document
+        string imageUrl;
         bool approved; // Admin approval flag
         bool closedForFunding; // Initially true, then set to false upon approval
         CampaignStatus status;
@@ -23,12 +25,14 @@ contract Donation {
     enum CampaignStatus { Pending, Approved, Rejected }
 
     struct CampaignView {
+        uint id;
         address payable organization;
         string name;
         string description;
         uint targetAmount;
         uint targetDate;
         uint raisedAmount;
+        string imageUrl;
         bool fundsReleased;
         string milestoneIPFSHash;
         bool approved;
@@ -71,17 +75,20 @@ contract Donation {
         string memory _description,
         uint _targetAmount,
         uint _targetDate,
-        string memory _milestoneIPFSHash
+        string memory _milestoneIPFSHash,
+        string memory _imageUrl
     ) public returns (uint) {
         campaignCount++;
 
         Campaign storage newCampaign = campaigns[campaignCount];
         newCampaign.organization = payable(msg.sender);
+        newCampaign.id = campaignCount;
         newCampaign.name = _name;
         newCampaign.description = _description;
         newCampaign.targetAmount = _targetAmount;
         newCampaign.targetDate = _targetDate;
         newCampaign.milestoneIPFSHash = _milestoneIPFSHash;
+        newCampaign.imageUrl = _imageUrl;
         newCampaign.raisedAmount = 0;
         newCampaign.fundsReleased = false;
         newCampaign.approved = false;
@@ -101,7 +108,8 @@ contract Donation {
         string memory _description,
         uint _targetAmount,
         uint _targetDate,
-        string memory _milestoneIPFSHash
+        string memory _milestoneIPFSHash,
+        string memory _imageUrl
     ) public { 
         Campaign storage campaignStorage = campaigns[_campaignId];
         require(campaignStorage.organization == msg.sender, "Cannot update campaign, not authorized");
@@ -113,6 +121,7 @@ contract Donation {
         campaignStorage.targetAmount = _targetAmount;
         campaignStorage.targetDate = _targetDate;
         campaignStorage.milestoneIPFSHash = _milestoneIPFSHash;
+        campaignStorage.imageUrl = _imageUrl;
 
         emit CampaignUpdated(_campaignId);
     }
@@ -179,18 +188,20 @@ contract Donation {
             uint campaignId = donatedIds[j];
             Campaign storage campaignStorage = campaigns[campaignId];
             donatedCampaigns[j] = CampaignView({
+                id: campaignStorage.id,
                 organization: campaignStorage.organization,
-                    name: campaignStorage.name,
-                    description: campaignStorage.description,
-                    targetAmount: campaignStorage.targetAmount,
-                    targetDate: campaignStorage.targetDate,
-                    raisedAmount: campaignStorage.raisedAmount,
-                    fundsReleased: campaignStorage.fundsReleased,
-                    approved: campaignStorage.approved,
-                    milestoneIPFSHash: campaignStorage.milestoneIPFSHash,
-                    status: campaignStorage.status,
-                    closedForFunding: campaignStorage.closedForFunding,
-                    isDeleted: campaignStorage.isDeleted
+                name: campaignStorage.name,
+                description: campaignStorage.description,
+                targetAmount: campaignStorage.targetAmount,
+                targetDate: campaignStorage.targetDate,
+                imageUrl: campaignStorage.imageUrl,
+                raisedAmount: campaignStorage.raisedAmount,
+                fundsReleased: campaignStorage.fundsReleased,
+                approved: campaignStorage.approved,
+                milestoneIPFSHash: campaignStorage.milestoneIPFSHash,
+                status: campaignStorage.status,
+                closedForFunding: campaignStorage.closedForFunding,
+                isDeleted: campaignStorage.isDeleted
             });
         }
         return donatedCampaigns;
@@ -248,11 +259,13 @@ contract Donation {
             if (!campaigns[i].isDeleted) {
                 Campaign storage campaignStorage = campaigns[i];
                 activeCampaigns[j] = CampaignView({
+                    id: campaignStorage.id,
                     organization: campaignStorage.organization,
                     name: campaignStorage.name,
                     description: campaignStorage.description,
                     targetAmount: campaignStorage.targetAmount,
                     targetDate: campaignStorage.targetDate,
+                    imageUrl: campaignStorage.imageUrl,
                     raisedAmount: campaignStorage.raisedAmount,
                     fundsReleased: campaignStorage.fundsReleased,
                     approved: campaignStorage.approved,
@@ -286,11 +299,13 @@ contract Donation {
             if (campaigns[i].status == CampaignStatus.Rejected) {
                 Campaign storage campaignStorage = campaigns[i];
                 rejectedCampaigns[j] = CampaignView({
+                    id: campaignStorage.id,
                     organization: campaignStorage.organization,
                     name: campaignStorage.name,
                     description: campaignStorage.description,
                     targetAmount: campaignStorage.targetAmount,
                     targetDate: campaignStorage.targetDate,
+                    imageUrl: campaignStorage.imageUrl,
                     raisedAmount: campaignStorage.raisedAmount,
                     fundsReleased: campaignStorage.fundsReleased,
                     milestoneIPFSHash: campaignStorage.milestoneIPFSHash,
