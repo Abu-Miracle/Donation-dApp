@@ -7,6 +7,7 @@ import { useReadContract, useAccount } from 'wagmi';
 import abi from "../abi/abi..json";
 import { ethers } from 'ethers';
 import Image from 'next/image';
+import CampaignOptions from "../../components/CampaignOptions";
 
 export default function CreatedCampaigns() {
     const [campaigns, setCampaigns] = useState([]);
@@ -47,6 +48,11 @@ export default function CreatedCampaigns() {
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
 
+    function truncateTitle(text, maxLength = 30) {
+        if (!text) return '';
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
+
     // Days Left
     function daysLeft(date) {
         // Get the current time in seconds
@@ -57,6 +63,7 @@ export default function CreatedCampaigns() {
         const daysLeft = Math.ceil(diffInSeconds / 86400);
         return daysLeft.toString();
     }
+
 
     return(
         <div className="min-h-screen bg-black">
@@ -92,40 +99,58 @@ export default function CreatedCampaigns() {
             {isLoading && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Loading campaigns...</p>}
             {isError && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>}
             
-            <div className="grid grid-cols-3 gap-8 mt-8 px-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-8 px-10">
                 {filteredCampaigns.map((campaign) =>   (
-                <div key={`${campaign.name}-${campaign.targetDate}`} className="bg-[var(--dark-gray)] rounded-xl py-6 px-8">
+                <div key={`${campaign.name}-${campaign.targetDate}`} className="bg-[var(--dark-gray)] rounded-xl ">
                     {/* Example Card */}
-                    <div className='mb-6'>
-                        <h2 className="text-white text-2xl font-bold">{campaign.name}</h2>
-                        <p className="text-[#747474]">{truncateText(campaign.description)}</p>
-                    </div>
-
-                    <div className='mb-6 flex flex-row justify-between items-center'>
-                        <div>
-                            <p className="text-white font-bold text-[22px]"> {ethers.formatEther(campaign.raisedAmount)} ETH</p>
-                            <p className="text-[#747474]">Raised of {ethers.formatEther(campaign.targetAmount)} ETH</p>
-                        </div>
-
-                        <div className='flex flex-col items-center'>
-                            <p className="text-white font-bold text-[22px]">{daysLeft(campaign.targetDate)}</p>
-                            <p className="text-[#747474]">days left</p>
-                        </div>
-                    </div>
-
-                    <div className='flex flex-row items-center justify-between'>
-                        <p className="text-[#747474]">
-                        by <span className='font-extrabold'> {truncateAddress(campaign.organization)}</span>
-                        </p>
-
-                        {campaign.approved ? <button className="text-[var(--sblue)] mt-2 cursor-pointer">See full details</button> :
-                        <Image
-                            src="/locked.svg"
-                            alt="Locked"
-                            width={20}
-                            height={20}
-                        /> 
+                    <div className=''>
+                        {campaign.imageUrl ?
+                        <img src={campaign.imageUrl} className="object-cover rounded-t-xl w-full h-60 mb-0" /> :
+                        <div className="bg-slate-500 w-full rounded-t-xl h-60 mb-0"></div>
                         }
+                    </div>
+
+                    <div className='px-8 py-6'>
+                        <div className='flex flex-row justify-between'>
+                            <div className='mb-6'>
+                                <h2 className="text-white text-2xl font-bold">{truncateTitle(campaign.name)}</h2>
+                                <p className="text-[#747474]">{truncateText(campaign.description)}</p>
+                            </div>
+                            <CampaignOptions
+                                isApproved={campaign.approved}
+                                onEdit={() => onEdit(campaign)}
+                                onDelete={() => onDelete(campaign)}
+                                onViewDetails={() => onViewDetails(campaign)} 
+                            />
+                        </div>
+
+                        <div className='mb-6 flex flex-row justify-between items-center'>
+                            <div>
+                                <p className="text-white font-bold text-[22px]"> {ethers.formatEther(campaign.raisedAmount)} ETH</p>
+                                <p className="text-[#747474]">Raised of {ethers.formatEther(campaign.targetAmount)} ETH</p>
+                            </div>
+
+                            <div className='flex flex-col items-center'>
+                                <p className="text-white font-bold text-[22px]">{daysLeft(campaign.targetDate)}</p>
+                                <p className="text-[#747474]">days left</p>
+                            </div>
+                        </div>
+
+                        <div className='flex flex-row items-center justify-between'>
+                            <p className="text-[#747474]">
+                            by <span className='font-extrabold'> {truncateAddress(campaign.organization)}</span>
+                            </p>
+
+                            {campaign.approved ? <button className="text-[var(--sblue)] mt-2 cursor-pointer">See full details</button> :
+                            <Image
+                                src="/locked.svg"
+                                alt="Locked"
+                                width={20}
+                                height={20}
+                                className='text-white'
+                            /> 
+                            }
+                        </div>
                     </div>
                 </div>
                 ))}

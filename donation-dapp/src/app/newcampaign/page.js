@@ -18,26 +18,35 @@ export default function NewCampaign() {
         targetAmount: '',
         targetDate: '',
         document: null,
+        image: null,
     });
     const [fileName, setFileName] = useState('');
+    const [imageFileName, setImageFileName] = useState('');
     const [uploading, setUploading] = useState(false);
     const [campaignArgs, setCampaignArgs] = useState(null);
 
     const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (files && files.length > 0) {
-        setFormData({
-        ...formData,
-        [name]: files[0],
-        });
-        setFileName(files[0].name);
-    } else {
-        setFormData({
-        ...formData,
-        [name]: value,
-        });
-    }
-    };
+        const { name, value, files } = e.target;
+        if (files && files.length > 0) {
+          // Update formData with the selected file
+          setFormData({
+            ...formData,
+            [name]: files[0],
+          });
+    
+          // Depending on which input changed, update the correct file name
+          if (name === 'image') {
+            setImageFileName(files[0].name);
+          } else if (name === 'document') {
+            setFileName(files[0].name);
+          }
+        } else {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+        }
+      };
 
     const { writeContract, writeContractAsync } = useWriteContract();
 
@@ -47,10 +56,18 @@ export default function NewCampaign() {
         try {
             setUploading(true);
             // Upload file to IPFS and get CID
-            const ipfsHash = await uploadFileToIPFS(formData.document);
+            const docIpfsHash = await uploadFileToIPFS(formData.document);
+
+            // Optionally, upload the campaign image to IPFS if provided.
+            let imageUrl = "";
+            let imageIpfsHash = null;
+            if(formData.image) {
+                imageIpfsHash = await uploadFileToIPFS(formData.image);
+                imageUrl = `https://maroon-high-horse-665.mypinata.cloud/ipfs/${imageIpfsHash}`;
+            }
             setUploading(false);
 
-                // 2. Parse the target amount (in ETH) to wei
+            // 2. Parse the target amount (in ETH) to wei
             const targetAmountWei = ethers.parseEther(formData.targetAmount)
             console.log("Parsed targetAmountWei:", targetAmountWei.toString());
 
@@ -66,7 +83,8 @@ export default function NewCampaign() {
                 formData.description,
                 targetAmountWei,
                 targetTimestamp,
-                ipfsHash,
+                docIpfsHash,
+                imageUrl
             ];
             setCampaignArgs(args);
 
@@ -85,7 +103,9 @@ export default function NewCampaign() {
                     console.error('Error executing transaction:', error);
                 });
             }
-            console.log("IPFS Hash: ", ipfsHash);
+            console.log("Doc IPFS Hash: ", docIpfsHash);
+            console.log("Image URL: ", imageUrl);
+            console.log("Image IPFS Hash: ", imageIpfsHash);
         } catch  (error) {
             console.error("Error creating campaign: ", error);
             setUploading(false);
@@ -144,6 +164,7 @@ export default function NewCampaign() {
                                 className="w-full px-6 py-3 border text-white text-[18px] font-light border-[#747474] rounded"
                             />
                         </div>
+                        
                         <div className="ml-4 w-full">
                             <label htmlFor="targetDate" className="block mb-2 text-xl text-white font-bold">Target Date*</label>
                             <input
@@ -155,6 +176,45 @@ export default function NewCampaign() {
                                 required
                                 className="w-full px-6 py-3 border text-white text-[18px] font-light border-[#747474] rounded"
                             />
+                        </div>
+                    </div>
+
+                    <div className='mb-14 w-full relative'>
+                        <label htmlFor="campaignImage" className="block mb-2 text-xl text-white font-bold">
+                        Campaign Image
+                        </label>
+
+                        <div className="relative">
+                            <input
+                            type="file"
+                            id="campaignImage"
+                            name="image"
+                            accept="image/*"
+                            onChange={handleChange}
+                            className="w-full px-6 py-6 border text-transparent text-[18px] font-light border-[#747474] rounded cursor-pointer"
+                            />
+                            
+                            <div className="absolute inset-0 px-6 py-3 flex items-center pointer-events-none">
+                                <span className={`text-[18px] font-light  ${imageFileName ? 'text-white' : 'text-[#747474]'}`}>
+                                    {imageFileName || 
+                                    <p className='items-center flex'> <span className='text-4xl mr-2 block'>+</span> <span className='block'>Upload Campaign Image</span> 
+                                    </p>}
+                                </span>
+                            </div>
+
+                            {imageFileName && 
+                                <button 
+                                    type="button"
+                                    className="absolute right-7 top-[50%] font-bold -translate-y-1/2 text-white"
+                                    onClick={() => {
+                                        setImageFileName('');
+                                        setFormData({ ...formData, image: null });
+                                        document.getElementById('campaignImage').value = '';
+                                    }}
+                                >
+                                    ✕
+                                </button>
+                            }
                         </div>
                     </div>
 

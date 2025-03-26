@@ -16,7 +16,6 @@ export default function Navbar() {
   // Define the common navigation items for regular users.
   const navLinks = ['Home', 'Created Campaigns', 'Donation History'];
 
-
   return (
     <nav className="relative flex justify-between items-center pt-7 px-4 pb-4 lg:px-20 bg-transparent text-white ">
       {/* Logo Section */}
