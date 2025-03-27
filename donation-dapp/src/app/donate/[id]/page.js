@@ -17,16 +17,9 @@ export default function DetailsPage () {
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
         functionName: 'getAllCampaigns',
     });
-
-    const { data: donorsAndAmounts, isLoading: loadingDonors, isError: errorDonors  } = useReadContract({
-        abi,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
-        functionName: 'getDonorsAndAmounts',
-        args: [parseInt(id)],
-    });
-
-    console.log("Donors X Amts: ", donorsAndAmounts);
     
+    console.log(campaigns);
+
     useEffect(() => {
         if (campaigns && Array.isArray(campaigns)) {
             console.log("Campaigns:", campaigns);
@@ -47,21 +40,12 @@ export default function DetailsPage () {
         return daysLeft.toString();
     }
 
-    function truncateAddress(address) {
-        if (!address) return '';
-        return `${address.substring(0, 10)}...${address.substring(address.length - 4)}`;
-    }
-
-    const [donors, amounts] = donorsAndAmounts || [];
-
     if (!campaign) return <p>No campaign found with ID: {id}</p>;
 
     return(
         <div className='min-h-screen bg-black'>
             <Navbar />
 
-            
-            {campaign.id && <p className='text-white'>No campaign found with ID: {id}</p>}
             {isLoading && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Loading campaigns...</p>}
             {isError && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>}
             <div className='flex flex-col justify-center items-center mt-16 px-10 lg:px-0 pb-20'>
@@ -116,27 +100,9 @@ export default function DetailsPage () {
                         </div>
 
                         <div className='flex flex-col mt-10'>
-                            <div className='text-white font-bold mb-2 text-xl table-auto"'>DONORS</div>
+                            <div className='text-white font-bold mb-2 text-xl'>DONORS</div>
+                            <div className='text-[#747474] text-lg'>{campaign.description}</div>
                         </div>
-
-                        <table className="table-fixed flex flex-wrap text-white">
-                            <thead>
-                                <tr className='flex items-center justify-between mt-5 gap-20 w-[25vw]'>
-                                    <th>S/N</th>
-                                    <th>Donor Address</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {donors?.map((donor, index) => (
-                                <tr key={donor} className="flex items-center justify-between gap-20 w-[25vw]">
-                                    <td>{index + 1}</td>
-                                    <td>{truncateAddress(donor)}</td>
-                                    <td>{ethers.formatEther(amounts[index])}</td>
-                                </tr>
-                                ))}
-                            </tbody>
-                        </table>
                     </div>
 
                     <div className='lg:mt-0 mt-8'>

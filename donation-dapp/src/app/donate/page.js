@@ -6,6 +6,7 @@ import { useReadContract } from 'wagmi';
 import abi from "../abi/abi.json";
 import { ethers } from 'ethers';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Donate() {
     const [selectedTab, setSelectedTab] = useState("open");
@@ -138,7 +139,11 @@ export default function Donate() {
                             by <span className='font-extrabold'> {truncateAddress(campaign.organization)}</span>
                             </p>
 
-                            {campaign.approved ? <button className="text-[var(--sblue)] mt-2 cursor-pointer">See full details</button> :
+                            {campaign.approved ? 
+                            <Link href={`/donate/${campaign.id}`}>
+                                <button className="text-[var(--sblue)] mt-2 cursor-pointer">See full details</button>
+                            </Link>
+                             :
                             <Image
                                 src="/locked.svg"
                                 alt="Locked"
