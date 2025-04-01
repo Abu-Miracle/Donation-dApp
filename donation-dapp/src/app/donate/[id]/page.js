@@ -11,6 +11,8 @@ import Image from 'next/image';
 export default function DetailsPage () {
     const { id } = useParams();
     const [campaign, setCampaign] = useState(null);
+    
+    const { address } = useAccount();
 
     const { data: campaigns, isLoading, isError } = useReadContract({
         abi,
@@ -19,6 +21,19 @@ export default function DetailsPage () {
     });
     
     console.log(campaigns);
+
+    const { data: donorsAndAmounts, isLoading: loadingDonors, isError: errorDonors  } = useReadContract({
+        abi,
+        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+        functionName: 'getDonorsAndAmounts',
+        args: [parseInt(id)],
+    });
+    
+    const donorCount = donorsAndAmounts ? donorsAndAmounts[0] : [];
+    const numberOfDonors = donorCount.length;
+
+    console.log("Donors X Amts: ", donorsAndAmounts);
+    console.log("Donor Count: ", numberOfDonors);
 
     useEffect(() => {
         if (campaigns && Array.isArray(campaigns)) {
@@ -39,6 +54,13 @@ export default function DetailsPage () {
         const daysLeft = Math.ceil(diffInSeconds / 86400);
         return daysLeft.toString();
     }
+
+    function truncateAddress(address) {
+        if (!address) return '';
+        return `${address.substring(0, 10)}...${address.substring(address.length - 4)}`;
+    }
+
+    const [donors, amounts] = donorsAndAmounts || [];
 
     if (!campaign) return <p>No campaign found with ID: {id}</p>;
 
@@ -68,7 +90,7 @@ export default function DetailsPage () {
                                 <div className='bg-[#1E1E1E] text-lg text-[#747474] font-bold w-full h-[40%] flex justify-center items-center rounded-b-xl'>{`Raised of ${ethers.formatEther(campaign.targetAmount)}`}</div>
                             </div>
                             <div className='w-36 aspect-square'>
-                                <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>--</div>
+                                <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>{numberOfDonors}</div>
                                 <div className='bg-[#1E1E1E] text-lg text-[#747474] font-bold w-full h-[40%] flex justify-center items-center rounded-b-xl'>Donors</div>
                             </div>
                         </div>
@@ -101,10 +123,26 @@ export default function DetailsPage () {
 
                         <div className='flex flex-col mt-10'>
                             <div className='text-white font-bold mb-2 text-xl'>DONORS</div>
-                            <div className='text-[#747474] text-lg'>{campaign.description}</div>
+                        </div>
+
+                        <div className='flex flex-col text-white w-[35vw]'>
+                            <div className='flex flex-row w-full'>
+                                <div className='w-[20%] text-left'>S/N</div>
+                                <div className='w-[80%] text-left'>Donor Address</div>
+                                <div className='w-[50%] text-left'>Amount</div>
+                            </div>
+
+                            {donors?.map((donor, index) => (
+                            <div key={donor} className="flex flex-row w-full">
+                                <div className='w-[20%] text-left'>{index + 1}</div>
+                                <div className='w-[80%] text-left'>{truncateAddress(donor)}</div>
+                                <div className='w-[50%] text-left'>{ethers.formatEther(amounts[index])}</div>
+                            </div>
+                            ))}
                         </div>
                     </div>
-
+                    
+                    {campaign.organization.toLowerCase() !== address?.toLowerCase() && (
                     <div className='lg:mt-0 mt-8'>
                         <h1 className='text-white font-bold mb-4 text-xl'>FUND CAMPAIGN</h1>
                         <form action="" method="" className='px-8 py-12 flex flex-col bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
@@ -119,6 +157,7 @@ export default function DetailsPage () {
                             <button type="submit" className='w-full font-bold rounded-2xl bg-[var(--sblue)] text-black p-3 text-xl font bold cursor-pointer hover:bg-[var(--bold-blue)]'>Donate</button>
                         </form>
                     </div>
+                    )}
                 </div>
                 
             </div>
