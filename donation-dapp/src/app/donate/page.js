@@ -88,13 +88,13 @@ export default function Donate() {
 
             <div className="flex flex-start space-x-6 mt-8 px-10">
                 <button
-                    className={selectedTab === "open" ? "text-white text-xl font-extrabold cursor-pointer" : "text-[#747474] cursor-pointer"}
+                    className={selectedTab === "open" ? "bg-white text-black text-xl font-[600] px-6 py-2 rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-[600] hover:bg-[#585858] text-white px-6 py-2 rounded-xl cursor-pointer"}
                     onClick={() => setSelectedTab("open")}
                 >
                     Open Campaigns
                 </button>
                 <button
-                    className={selectedTab === "closed" ? "text-white text-xl font-extrabold cursor-pointer" : "text-[#747474] cursor-pointer"}
+                    className={selectedTab === "closed" ? "bg-white text-black text-xl font-[600] px-6 py-2  rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-[600] hover:bg-[#585858] text-white px-6 py-2 rounded-xl cursor-pointer"}
                     onClick={() => setSelectedTab("closed")}
                 >
                     Closed Campaigns
@@ -135,9 +135,21 @@ export default function Donate() {
                         </div>
 
                         <div className='flex flex-row items-center justify-between'>
-                            <p className="text-[#747474]">
-                            by <span className='font-extrabold'> {truncateAddress(campaign.organization)}</span>
-                            </p>
+                            <div className='flex flex-row'>
+                                <div className='bg-gray-300 p-1 rounded-full mr-3'>
+                                    <Image 
+                                    src='/ethereum.svg'
+                                    alt='eth'
+                                    width={15}
+                                    height={15}
+                                    />
+                                </div>
+                                <div>
+                                    <p className="text-[#747474]">
+                                    by <span className='font-extrabold'> {truncateAddress(campaign.organization)}</span>
+                                    </p>
+                                </div>
+                            </div>
 
                             {campaign.approved ? 
                             <Link href={`/donate/${campaign.id}`}>

@@ -28,7 +28,7 @@ export default function AdminPage() {
     return(
         <div className="min-h-screen bg-black">
             <Navbar />
-            <h1 className="text-2xl text-center mt-16 font-bold text-white">Admin Dashboard</h1>
+            <h1 className="text-3xl text-center mt-16 font-bold text-white">Admin Dashboard</h1>
         </div>
     );
 }

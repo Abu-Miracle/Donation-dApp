@@ -138,9 +138,21 @@ export default function CreatedCampaigns() {
                         </div>
 
                         <div className='flex flex-row items-center justify-between'>
-                            <p className="text-[#747474]">
-                            by <span className='font-extrabold'> {truncateAddress(campaign.organization)}</span>
-                            </p>
+                             <div className='flex flex-row'>
+                                <div className='bg-gray-300 p-1 rounded-full mr-3'>
+                                    <Image 
+                                    src='/ethereum.svg'
+                                    alt='eth'
+                                    width={15}
+                                    height={15}
+                                    />
+                                </div>
+                                <div>
+                                    <p className="text-[#747474]">
+                                    by <span className='font-extrabold'> {truncateAddress(campaign.organization)}</span>
+                                    </p>
+                                </div>
+                            </div>
 
                             {campaign.approved ? 
                             <Link href={`/createdcampaigns/${campaign.id}`}>
