@@ -23,22 +23,22 @@ export default function Navbar() {
         <Image
           src="/logo.svg"
           alt="BlockFund Logo"
-          width={40}
-          height={40}
-          className="w-8 h-8 lg:w-10 lg:h-10"
+          width={28}
+          height={28}
+          className="w-6 h-6 lg:w-8 lg:h-8"
         />
-        <p className="text-2xl lg:text-3xl text-[var(--sblue)]">
+        <p className="text-xl lg:text-2xl text-[var(--sblue)]">
           Block<span className="font-bold">Fund</span>
         </p>
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden lg:flex items-center gap-6 lg:gap-8">
+      <div className="hidden lg:flex items-center gap-4 lg:gap-6">
         {navLinks.map((item, index) => (
           <Link
             key={index}
             href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`}
-            className="text-lg font-semibold hover:text-[var(--sblue)] transition-all duration-300 hover:scale-105"
+            className="text-sm font-semibold hover:text-[var(--sblue)] transition-all duration-300 hover:scale-105"
           >
             {item}
           </Link>
@@ -47,7 +47,7 @@ export default function Navbar() {
         {isAdmin && (
           <Link
             href="/admin"
-            className="text-lg font-semibold hover:text-[var(--sblue)] transition-all duration-300 hover:scale-105"
+            className="text-sm font-semibold hover:text-[var(--sblue)] transition-all duration-300 hover:scale-105"
           >
             Admin
           </Link>

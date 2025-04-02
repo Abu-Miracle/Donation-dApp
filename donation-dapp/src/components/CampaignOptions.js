@@ -21,7 +21,7 @@ const CampaignOptions = ({ isApproved, onEdit, onDelete, onViewDetails }) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="p-2 focus:outline-none"
+        className="p-2 focus:outline-none cursor-pointer"
       >
         {/* Three dot icon */}
         <svg

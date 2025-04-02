@@ -8,19 +8,19 @@ export default function HeroSection() {
         <Navbar />
         <div className='my-auto h-full flex flex-col items-center justify-center text-center px-4 py-10'>
           <div className="px-3">
-            <p className='text-[42px] lg:text-[80px] font-bold text-white leading-[1.1] mb-0 transition-transform duration-300 hover:scale-105'>Empowering Donations with 
+            <p className='text-[42px] lg:text-[60px] font-bold text-white leading-[1.1] mb-0 transition-transform duration-300 hover:scale-105'>Empowering Donations with 
             <span className="block mt-3 lg:mt-2">Trust and Transparency</span></p>
-            <p className="text-3xl flex-wrap lg:text-[50px] font-bold text-[var(--sblue)] mt-8 transition-transform duration-300 hover:scale-105">Powered by The Ethereum Blockchain</p>
-            <p className='text-2xl lg:text-[34px] font-light text-[#E9ECEB] mt-8 transition-transform duration-300 hover:scale-105'>Be a part of the breakthrough and make someone’s dream come true.</p>
+            <p className="text-2xl flex-wrap lg:text-[40px] font-bold text-[var(--sblue)] mt-8 transition-transform duration-300 hover:scale-105">Powered by The Ethereum Blockchain</p>
+            <p className='text-xl lg:text-[30px] font-light text-[#E9ECEB] mt-8 transition-transform duration-300 hover:scale-105'>Be a part of the breakthrough and make someone’s dream come true.</p>
           </div>
-          <div className='mt-8 lg:mt-16 flex flex-col gap-8 lg:gap-0 lg:flex-row'>
+          <div className='mt-8 lg:mt-14 flex flex-col gap-8 lg:gap-0 lg:flex-row'>
             <Link href="/donate">
-              <button className='bg-[var(--sblue)] text-black rounded-4xl text-[27px] font-semibold p-5 px-20 cursor-pointer hover:bg-[var(--light-blue)]'>
+              <button className='bg-[var(--sblue)] text-black rounded-4xl text-[24px] font-semibold p-5 px-20 cursor-pointer hover:bg-[var(--light-blue)]'>
                 Donate Now
               </button>
             </Link>
             <Link href="/newcampaign">
-              <button className='bg-transparent border-3 border-white text-white rounded-4xl text-[27px] font-semibold p-5 px-10 lg:ml-8 cursor-pointer hover:border-transparent hover:text-black hover:bg-[#E9ECEB]'>
+              <button className='bg-transparent border-3 border-white text-white rounded-4xl text-[24px] font-semibold p-5 px-10 lg:ml-8 cursor-pointer hover:border-transparent hover:text-black hover:bg-[#E9ECEB]'>
                 Create a Campaign
               </button>
             </Link>

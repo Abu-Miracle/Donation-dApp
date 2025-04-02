@@ -3,14 +3,18 @@
 import Navbar from '../../../components/Navbar';
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { useReadContract, useAccount } from 'wagmi';
+import { useReadContract, useWriteContract, useAccount, useWaitForTransactionReceipt } from 'wagmi';
 import abi from "../../abi/abi.json";
 import { ethers } from 'ethers';
 import Image from 'next/image';
+import { Modal } from "../../../components/Modal";
 
 export default function DetailsPage () {
     const { id } = useParams();
     const [campaign, setCampaign] = useState(null);
+    const [donationAmount, setDonationAmount] = useState("");
+    const [txHash, setTxHash] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
     const { address } = useAccount();
 
@@ -35,6 +39,13 @@ export default function DetailsPage () {
     console.log("Donors X Amts: ", donorsAndAmounts);
     console.log("Donor Count: ", numberOfDonors);
 
+    const { writeContract, writeContractAsync } = useWriteContract();
+    
+    const { data: receipt, isSuccess } = useWaitForTransactionReceipt({
+        hash: txHash,
+    });
+      
+
     useEffect(() => {
         if (campaigns && Array.isArray(campaigns)) {
             console.log("Campaigns:", campaigns);
@@ -44,6 +55,7 @@ export default function DetailsPage () {
             setCampaign(selectedCampaign);
         }
     }, [campaigns, id]);
+
 
     function daysLeft(date) {
         // Get the current time in seconds
@@ -62,6 +74,40 @@ export default function DetailsPage () {
 
     const [donors, amounts] = donorsAndAmounts || [];
 
+    const handleDonate = async (e) => {
+        e.preventDefault();
+        try {
+            // Trigger the modal to show processing
+            setIsModalOpen(true);
+          
+             // Prepare the amount in wei
+             const amountInWei = ethers.parseEther(donationAmount);
+          
+            // Call the contract donate function
+            const tx = await writeContractAsync({
+                abi,
+                address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+                functionName: 'donate',
+                args: [parseInt(id)], // pass campaign id as argument if required
+                overrides: {
+                    value: amountInWei,
+                },
+            });
+            
+            console.log("Transaction sent:", tx.hash);
+            setTxHash(tx.hash);
+            
+            // After confirmation, alert success
+            alert("Donation made successfully!");
+            
+            // Optionally, update state or refresh data...
+            
+        } catch (error) {
+            console.error("Error making donation:", error);
+            setIsModalOpen(false);
+        }
+      };
+
     if (!campaign) return <p>No campaign found with ID: {id}</p>;
 
     return(
@@ -75,34 +121,34 @@ export default function DetailsPage () {
                     <div className='flex flex-row gap-10'> 
                         <div>
                             {campaign.imageUrl ? 
-                            <img src={campaign.imageUrl} className='object-cover rounded-xl w-[65vw] h-[500px]' /> : 
+                            <img src={campaign.imageUrl} className='object-cover rounded-xl w-[65vw] h-[400px]' /> : 
                             <div className='bg-slate-500'></div>
                             }
                         </div>
                         
                         <div className='flex flex-col justify-between text-center'>
-                            <div className='w-36 aspect-square'>
+                            <div className='w-28 aspect-square'>
                                 <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>{daysLeft(campaign.targetDate)}</div>
-                                <div className='bg-[#1E1E1E] text-lg text-[#747474] font-bold w-full h-[40%] flex justify-center items-center rounded-b-xl'>Days left</div>
+                                <div className='bg-[#1E1E1E] text-sm text-[#747474] font-semibold w-full h-[40%] flex justify-center items-center rounded-b-xl'>Days left</div>
                             </div>
-                            <div className=' w-36 aspect-square'>
+                            <div className=' w-28 aspect-square'>
                                 <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>{ethers.formatEther(campaign.raisedAmount)}</div>
-                                <div className='bg-[#1E1E1E] text-lg text-[#747474] font-bold w-full h-[40%] flex justify-center items-center rounded-b-xl'>{`Raised of ${ethers.formatEther(campaign.targetAmount)}`}</div>
+                                <div className='bg-[#1E1E1E] text-sm text-[#747474] font-semibold w-full h-[40%] flex justify-center items-center rounded-b-xl'>{`Raised of ${ethers.formatEther(campaign.targetAmount)}`}</div>
                             </div>
-                            <div className='w-36 aspect-square'>
+                            <div className='w-28 aspect-square'>
                                 <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>{numberOfDonors}</div>
-                                <div className='bg-[#1E1E1E] text-lg text-[#747474] font-bold w-full h-[40%] flex justify-center items-center rounded-b-xl'>Donors</div>
+                                <div className='bg-[#1E1E1E] text-sm text-[#747474] font-semibold w-full h-[40%] flex justify-center items-center rounded-b-xl'>Donors</div>
                             </div>
                         </div>
                     </div>
 
-                    <h1 className='text-white text-4xl font-bold mt-6'>{campaign.name}</h1>
+                    <h1 className='text-white text-3xl font-bold mt-6'>{campaign.name}</h1>
                 </div>
 
-                <div className='flex flex-col lg:flex-row justify-between w-full px-10 lg:px-56 mt-16'>
+                <div className='flex flex-col lg:flex-row justify-between w-full px-10 lg:px-40 mt-16'>
                     <div className='flex flex-col'>
                         <div className='flex flex-col'>
-                            <h1 className='text-white font-bold mb-2 text-xl'>CREATOR</h1>
+                            <h1 className='text-white font-bold mb-2 text-lg'>CREATOR</h1>
                             <div className='flex flex-row'>
                                 <div className='bg-gray-300 p-1 rounded-full mr-2'>
                                     <Image 
@@ -112,30 +158,32 @@ export default function DetailsPage () {
                                     height={20}
                                     />
                                 </div>
-                                <div className='text-[#747474] text-lg'>{campaign.organization}</div>
+                                <div className='text-[#747474] text-sm'>{campaign.organization}</div>
                             </div>
                         </div>
 
                         <div className='flex flex-col mt-10'>
-                            <div className='text-white font-bold mb-2 text-xl'>STORY</div>
-                            <div className='text-[#747474] text-lg'>{campaign.description}</div>
+                            <div className='text-white font-bold mb-2 text-lg'>STORY</div>
+                            <div className='text-[#747474] text-sm'>{campaign.description}</div>
                         </div>
 
                         <div className='flex flex-col mt-10'>
-                            <div className='text-white font-bold mb-2 text-xl'>DONORS</div>
+                            <div className='text-white font-bold mb-2 text-lg'>DONORS</div>
                         </div>
 
-                        <div className='flex flex-col text-white w-[35vw]'>
-                            <div className='flex flex-row w-full'>
+                        <div className='flex flex-col text-white w-full lg:w-[35vw] font-bold'>
+                            <div className='flex flex-row w-full justify-between mb-3'>
                                 <div className='w-[20%] text-left'>S/N</div>
                                 <div className='w-[80%] text-left'>Donor Address</div>
+                                <div className='w-[80%] text-left'>Tx Hash</div>
                                 <div className='w-[50%] text-left'>Amount</div>
                             </div>
 
                             {donors?.map((donor, index) => (
-                            <div key={donor} className="flex flex-row w-full">
+                            <div key={donor} className="flex flex-row w-full justify-between mb-1 text-[#747474]">
                                 <div className='w-[20%] text-left'>{index + 1}</div>
                                 <div className='w-[80%] text-left'>{truncateAddress(donor)}</div>
+                                <div className='w-[80%] text-left'>Tx Hash</div>
                                 <div className='w-[50%] text-left'>{ethers.formatEther(amounts[index])}</div>
                             </div>
                             ))}
@@ -144,23 +192,26 @@ export default function DetailsPage () {
                     
                     {campaign.organization.toLowerCase() !== address?.toLowerCase() && (
                     <div className='lg:mt-0 mt-8'>
-                        <h1 className='text-white font-bold mb-4 text-xl'>FUND CAMPAIGN</h1>
-                        <form action="" method="" className='px-8 py-12 flex flex-col bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
-                            <p className='text-[#747474] text-xl'>Enter the amount that you would want to support this campaign with</p>
+                        <h1 className='text-white font-bold mb-4 text-lg'>FUND CAMPAIGN</h1>
+                        <form onSubmit={handleDonate} className='px-8 py-12 flex flex-col bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
+                            <p className='text-[#747474] text-sm'>Enter the amount that you would want to support this campaign with</p>
                             <input 
                             type="number" 
                             name="amount" 
                             id="amount" 
                             placeholder="Amount in ETH"
-                            className='bg-[#0E0E0E] border-2 border-[#747474] py-5 px-3 text-[#747474] w-full'
+                            value={donationAmount}
+                            onChange={(e) => setDonationAmount(e.target.value)}
+                            className='bg-[#0E0E0E] border-2 border-[#747474] py-3 px-3 text-[#747474] w-full'
                             />
-                            <button type="submit" className='w-full font-bold rounded-2xl bg-[var(--sblue)] text-black p-3 text-xl font bold cursor-pointer hover:bg-[var(--bold-blue)]'>Donate</button>
+                            <button type="submit" className='w-full font-bold rounded-2xl bg-[var(--sblue)] text-black p-3 text-lg font bold cursor-pointer hover:bg-[var(--bold-blue)]'>Donate</button>
                         </form>
                     </div>
                     )}
                 </div>
-                
+                <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} txHash={txHash} />
             </div>
+
         </div>
     );
 }
