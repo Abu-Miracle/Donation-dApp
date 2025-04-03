@@ -40,11 +40,6 @@ export default function DetailsPage () {
     console.log("Donor Count: ", numberOfDonors);
 
     const { writeContract, writeContractAsync } = useWriteContract();
-    
-    const { data: receipt, isSuccess } = useWaitForTransactionReceipt({
-        hash: txHash,
-    });
-      
 
     useEffect(() => {
         if (campaigns && Array.isArray(campaigns)) {
@@ -84,23 +79,16 @@ export default function DetailsPage () {
              const amountInWei = ethers.parseEther(donationAmount);
           
             // Call the contract donate function
-            const tx = await writeContractAsync({
+            const result = await writeContractAsync({
                 abi,
                 address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
                 functionName: 'donate',
-                args: [parseInt(id)], // pass campaign id as argument if required
-                overrides: {
-                    value: amountInWei,
-                },
+                args: [parseInt(id)], 
+                value: amountInWei,
             });
             
-            console.log("Transaction sent:", tx.hash);
-            setTxHash(tx.hash);
-            
-            // After confirmation, alert success
-            alert("Donation made successfully!");
-            
-            // Optionally, update state or refresh data...
+            console.log("Transaction sent:", result);
+            setTxHash(result);
             
         } catch (error) {
             console.error("Error making donation:", error);
