@@ -110,19 +110,18 @@ export default function NewCampaign() {
             console.error("Error creating campaign: ", error);
             setUploading(false);
         }
- 
     };
       
     return(
         <div className="min-h-screen bg-black pb-20">
             <Navbar />
 
-            <div className='justify-center mx-auto mt-20 h-auto bg-[#0E0E0E] w-[80%] px-30 py-20 rounded-3xl'>
-                <h1 className='text-white text-center font-bold text-2xl mb-7'>Create a Campaign</h1>
+            <div className='justify-center mx-auto mt-18 h-auto bg-[#0E0E0E] w-[80%] px-28 py-16 rounded-3xl'>
+                <h1 className='text-white text-center font-bold text-xl mb-7'>Create a Campaign</h1>
 
                 <form action="" method="" onSubmit={handleSubmit}>
                     <div className="mb-14">
-                        <label htmlFor="name" className="block mb-2 text-xl text-white font-bold">Campaiggn Name*</label>
+                        <label htmlFor="name" className="block mb-2 text-lg text-white font-bold">Campaign Name*</label>
                         <input
                             type="text"
                             id="name"
@@ -131,12 +130,12 @@ export default function NewCampaign() {
                             value={formData.name}
                             onChange={handleChange}
                             required
-                            className="w-full px-6 py-3 border text-white text-[18px] font-light border-[#747474] rounded"
+                            className="w-full px-6 py-3 border text-white text-[16px] font-light border-[#747474] rounded"
                         />
                     </div>
 
                     <div className="mb-14">
-                        <label htmlFor="description" className="block mb-2 text-xl text-white font-bold">Description/Story*</label>
+                        <label htmlFor="description" className="block mb-2 text-lg text-white font-bold">Description/Story*</label>
                         <textarea
                             rows='10'
                             type="text"
@@ -146,13 +145,13 @@ export default function NewCampaign() {
                             value={formData.description}
                             onChange={handleChange}
                             required
-                            className="w-full px-6 py-3 border text-white text-[18px] font-light border-[#747474] rounded"
+                            className="w-full px-6 py-3 border text-white text-[16px] font-light border-[#747474] rounded"
                         />
                     </div>
 
                     <div className='flex flex-row justify-center'>
                         <div className="mb-14 w-full">
-                            <label htmlFor="targetAmount" className="block mb-2 text-xl text-white font-bold">Target Amount (ETH)*</label>
+                            <label htmlFor="targetAmount" className="block mb-2 text-lg text-white font-bold">Target Amount (ETH)*</label>
                             <input
                                 type="number"
                                 id="targetAmount"
@@ -161,12 +160,12 @@ export default function NewCampaign() {
                                 value={formData.targetAmount}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-6 py-3 border text-white text-[18px] font-light border-[#747474] rounded"
+                                className="w-full px-6 py-3 border text-white text-[16px] font-light border-[#747474] rounded"
                             />
                         </div>
                         
                         <div className="ml-4 w-full">
-                            <label htmlFor="targetDate" className="block mb-2 text-xl text-white font-bold">Target Date*</label>
+                            <label htmlFor="targetDate" className="block mb-2 text-lg text-white font-bold">Target Date*</label>
                             <input
                                 type="date"
                                 id="targetDate"
@@ -174,13 +173,13 @@ export default function NewCampaign() {
                                 value={formData.targetDate}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-6 py-3 border text-white text-[18px] font-light border-[#747474] rounded"
+                                className="w-full px-6 py-3 border text-white text-[16px] font-light border-[#747474] rounded"
                             />
                         </div>
                     </div>
 
                     <div className='mb-14 w-full relative'>
-                        <label htmlFor="campaignImage" className="block mb-2 text-xl text-white font-bold">
+                        <label htmlFor="campaignImage" className="block mb-2 text-lg text-white font-bold">
                         Campaign Image
                         </label>
 
@@ -191,7 +190,7 @@ export default function NewCampaign() {
                             name="image"
                             accept="image/*"
                             onChange={handleChange}
-                            className="w-full px-6 py-6 border text-transparent text-[18px] font-light border-[#747474] rounded cursor-pointer"
+                            className="w-full px-6 py-6 border text-transparent text-[16px] font-light border-[#747474] rounded cursor-pointer"
                             />
                             
                             <div className="absolute inset-0 px-6 py-3 flex items-center pointer-events-none">
@@ -219,7 +218,7 @@ export default function NewCampaign() {
                     </div>
 
                     <div className="w-full relative">
-                        <label htmlFor="document" className="block mb-2 text-xl text-white font-bold">Milestone Document*</label>
+                        <label htmlFor="document" className="block mb-2 text-lg text-white font-bold">Milestone Document*</label>
                         <div className='realtive'>
                             <input
                                 type="file"
@@ -228,7 +227,7 @@ export default function NewCampaign() {
                                 accept="application/pdf"
                                 onChange={handleChange}
                                 required
-                                className="w-full px-6 py-6 border text-transparent text-[18px] font-light border-[#747474] rounded cursor-pointer"
+                                className="w-full px-6 py-6 border text-transparent text-[16px] font-light border-[#747474] rounded cursor-pointer"
                             />
                             <div className="absolute inset-0 px-6 py-3 flex items-center pointer-events-none">
                                 <span className={`text-[18px] font-light mt-9 ${fileName ? 'text-white' : 'text-[#747474]'}`}>
@@ -254,7 +253,7 @@ export default function NewCampaign() {
                         </div>
                     </div>
 
-                    <button type="submit" className="bg-[var(--sblue)] text-black py-4 px-6 font-bold text-xl rounded-2xl hover:bg-[var(--light-blue)] block mx-auto mt-16">
+                    <button type="submit" className="bg-[var(--sblue)] text-black py-4 px-6 font-bold text-lg rounded-2xl hover:bg-[var(--light-blue)] block mx-auto mt-16">
                     {uploading ? 'Uploading...' : 'Submit New Campaign'}
                     </button>
 

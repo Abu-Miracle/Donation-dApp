@@ -155,7 +155,7 @@ export default function CreatedCampaigns() {
                             </div>
 
                             {campaign.approved ? 
-                            <Link href={`/createdcampaigns/${campaign.id}`}>
+                            <Link href={`/donate/${campaign.id}`}>
                                 <button className="text-[var(--sblue)] mt-2 text-[14px] cursor-pointer">See full details</button>
                             </Link> :
                             <Image

@@ -112,7 +112,7 @@ export default function Donate() {
                     <div className=''>
                         {campaign.imageUrl ?
                         <img src={campaign.imageUrl} className="object-cover rounded-t-xl w-full h-52 mb-0" /> :
-                        <div className="bg-slate-500 w-full h-52 mb-0"></div>
+                        <div className="bg-slate-500 w-full rounded-t-xl h-52 mb-0"></div>
                         }
                     </div>
 

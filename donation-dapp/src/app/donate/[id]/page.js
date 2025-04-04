@@ -7,6 +7,7 @@ import { useReadContract, useWriteContract, useAccount, useWaitForTransactionRec
 import abi from "../../abi/abi.json";
 import { ethers } from 'ethers';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Modal } from "../../../components/Modal";
 
 export default function DetailsPage () {
@@ -15,6 +16,7 @@ export default function DetailsPage () {
     const [donationAmount, setDonationAmount] = useState("");
     const [txHash, setTxHash] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [donationEvents, setDonationEvents] = useState([]);
     
     const { address } = useAccount();
 
@@ -50,6 +52,30 @@ export default function DetailsPage () {
             setCampaign(selectedCampaign);
         }
     }, [campaigns, id]);
+
+    useEffect(() => {
+        async function fetchDonationEvents() {
+          if (!id) return;
+          try {
+            // Create a provider (using window.ethereum or your configured provider)
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            // Create the contract instance
+            const contract = new ethers.Contract(
+              process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+              abi,
+              provider
+            );
+            // Create a filter for DonationReceived events for this campaign id.
+            // Assuming the event signature is DonationReceived(uint _campaignId, address donor, uint value)
+            const filter = contract.filters.DonationReceived(parseInt(id));
+            const events = await contract.queryFilter(filter);
+            setDonationEvents(events);
+          } catch (error) {
+            console.error("Error fetching donation events:", error);
+          }
+        }
+        fetchDonationEvents();
+      }, [id]);
 
 
     function daysLeft(date) {
@@ -89,6 +115,7 @@ export default function DetailsPage () {
             
             console.log("Transaction sent:", result);
             setTxHash(result);
+
             
         } catch (error) {
             console.error("Error making donation:", error);
@@ -96,7 +123,7 @@ export default function DetailsPage () {
         }
       };
 
-    if (!campaign) return <p>No campaign found with ID: {id}</p>;
+    if (!campaign) return <div className='min-h-screen w-full text-white bg-black text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>No campaign found with ID: {id}</div>;
 
     return(
         <div className='min-h-screen bg-black'>
@@ -110,7 +137,7 @@ export default function DetailsPage () {
                         <div>
                             {campaign.imageUrl ? 
                             <img src={campaign.imageUrl} className='object-cover rounded-xl w-[65vw] h-[400px]' /> : 
-                            <div className='bg-slate-500'></div>
+                            <div className='bg-slate-500 w-[65vw] h-[400px] rounded-xl'></div>
                             }
                         </div>
                         
@@ -133,8 +160,8 @@ export default function DetailsPage () {
                     <h1 className='text-white text-3xl font-bold mt-6'>{campaign.name}</h1>
                 </div>
 
-                <div className='flex flex-col lg:flex-row justify-between w-full px-10 lg:px-40 mt-16'>
-                    <div className='flex flex-col'>
+                <div className='flex flex-col lg:flex-row justify-between w-full px-10 lg:px-30 xl:px-40 mt-16'>
+                    <div className='flex flex-col lg:mr-5'>
                         <div className='flex flex-col'>
                             <h1 className='text-white font-bold mb-2 text-lg'>CREATOR</h1>
                             <div className='flex flex-row'>
@@ -159,7 +186,7 @@ export default function DetailsPage () {
                             <div className='text-white font-bold mb-2 text-lg'>DONORS</div>
                         </div>
 
-                        <div className='flex flex-col text-white w-full lg:w-[35vw] font-bold'>
+                        <div className='flex flex-col text-white w-full lg:w-[45vw] font-bold'>
                             <div className='flex flex-row w-full justify-between mb-3'>
                                 <div className='w-[20%] text-left'>S/N</div>
                                 <div className='w-[80%] text-left'>Donor Address</div>
@@ -167,14 +194,28 @@ export default function DetailsPage () {
                                 <div className='w-[50%] text-left'>Amount</div>
                             </div>
 
-                            {donors?.map((donor, index) => (
-                            <div key={donor} className="flex flex-row w-full justify-between mb-1 text-[#747474]">
-                                <div className='w-[20%] text-left'>{index + 1}</div>
-                                <div className='w-[80%] text-left'>{truncateAddress(donor)}</div>
-                                <div className='w-[80%] text-left'>Tx Hash</div>
-                                <div className='w-[50%] text-left'>{ethers.formatEther(amounts[index])}</div>
-                            </div>
-                            ))}
+                            {donationEvents.map((event, index) => {
+                                const { donor, amount } = event.args; // Destructure event parameters
+                                // Format donation amount
+                                // const formattedAmount = value ? ethers.formatEther(value) : "0";
+                                console.log(event.args);
+                                const formattedAmount = ethers.formatEther(amount);
+                                // Optionally, you can add logic to fetch and format the block timestamp:
+                                // const donationDate = ... fetch block data from provider ...
+                                
+                                return (
+                                <div key={event.transactionHash + index} className="flex flex-row w-full justify-between mb-1 text-[#747474]">
+                                    <div className='w-[20%] text-left'>{index + 1}</div>
+                                    <div className='w-[80%] text-left'>{truncateAddress(donor)}</div>
+                                    <div className='w-[80%] text-left font-medium text-blue-500 cursor-pointer underline underline-offset-2'>
+                                        <Link href={`https://sepolia.etherscan.io/tx/${event.transactionHash}`}>
+                                            {truncateAddress(event.transactionHash)}
+                                        </Link>
+                                    </div>
+                                    <div className='w-[50%] text-left'>{formattedAmount}</div>
+                                </div>
+                                );
+                            })}
                         </div>
                     </div>
                     

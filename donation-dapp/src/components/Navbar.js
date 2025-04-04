@@ -17,7 +17,7 @@ export default function Navbar() {
   const navLinks = ['Home', 'Created Campaigns', 'Donation History'];
 
   return (
-    <nav className="relative flex justify-between items-center pt-7 px-4 pb-4 lg:px-20 bg-transparent text-white ">
+    <nav className="relative flex justify-between items-center pt-7 px-6 pb-4 xl:px-16 bg-transparent text-white ">
       {/* Logo Section */}
       <div className="flex items-center gap-3">
         <Image
@@ -33,7 +33,7 @@ export default function Navbar() {
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden lg:flex items-center gap-4 lg:gap-6">
+      <div className="hidden lg:flex items-center gap-3 xl:gap-6">
         {navLinks.map((item, index) => (
           <Link
             key={index}
