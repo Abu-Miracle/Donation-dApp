@@ -90,7 +90,7 @@ export default function CreatedCampaigns() {
                 </button>
             </div>
 
-            <div className="flex flex-start mt-8 px-10">
+            <div className="flex flex-start mt-8 px-10 border-b-[2px] mx-7 pb-3 border-[#1E1E1E]">
                 <button className='text-white text-[16px] font-bold'>
                     Created Campaigns
                 </button>

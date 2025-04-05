@@ -10,6 +10,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Modal } from "../../../components/Modal";
 
+// BASE - https://base-sepolia.blockscout.com/tx/
+// OR - https://sepolia.basescan.org/tx/
+// SEPOLIA - https://sepolia.etherscan.io/tx/
+
 export default function DetailsPage () {
     const { id } = useParams();
     const [campaign, setCampaign] = useState(null);
@@ -58,7 +62,8 @@ export default function DetailsPage () {
           if (!id) return;
           try {
             // Create a provider (using window.ethereum or your configured provider)
-            const provider = new ethers.BrowserProvider(window.ethereum);
+            //const provider = new ethers.BrowserProvider(window.ethereum);
+            const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL);
             // Create the contract instance
             const contract = new ethers.Contract(
               process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
@@ -67,8 +72,9 @@ export default function DetailsPage () {
             );
             // Create a filter for DonationReceived events for this campaign id.
             // Assuming the event signature is DonationReceived(uint _campaignId, address donor, uint value)
+            const DEPLOYMENT_BLOCK = 24053149;
             const filter = contract.filters.DonationReceived(parseInt(id));
-            const events = await contract.queryFilter(filter);
+            const events = await contract.queryFilter(filter, DEPLOYMENT_BLOCK, 'latest');
             setDonationEvents(events);
           } catch (error) {
             console.error("Error fetching donation events:", error);
@@ -181,47 +187,54 @@ export default function DetailsPage () {
                             <div className='text-white font-bold mb-2 text-lg'>STORY</div>
                             <div className='text-[#747474] text-sm'>{campaign.description}</div>
                         </div>
-
+                            
+                        {campaign.approved ? 
+                        <>
                         <div className='flex flex-col mt-10'>
-                            <div className='text-white font-bold mb-2 text-lg'>DONORS</div>
+                            <div className='text-white font-bold mb-4 text-lg'>DONORS</div>
                         </div>
-
-                        <div className='flex flex-col text-white w-full lg:w-[45vw] font-bold'>
-                            <div className='flex flex-row w-full justify-between mb-3'>
+                        <div className='flex flex-col text-white w-full lg:w-[45vw] bg-[#0E0E0E] pt-6 pb-4 px-5 rounded-2xl font-bold'>
+                            <div className='flex flex-row w-full justify-between pb-4 mb-4 border-b-[1px] border-[#747474] border-opacity-100'>
                                 <div className='w-[20%] text-left'>S/N</div>
                                 <div className='w-[80%] text-left'>Donor Address</div>
                                 <div className='w-[80%] text-left'>Tx Hash</div>
-                                <div className='w-[50%] text-left'>Amount</div>
+                                <div className='w-[30%] text-left'>Amount</div>
                             </div>
 
                             {donationEvents.map((event, index) => {
-                                const { donor, amount } = event.args; // Destructure event parameters
-                                // Format donation amount
-                                // const formattedAmount = value ? ethers.formatEther(value) : "0";
-                                console.log(event.args);
-                                const formattedAmount = ethers.formatEther(amount);
-                                // Optionally, you can add logic to fetch and format the block timestamp:
-                                // const donationDate = ... fetch block data from provider ...
-                                
-                                return (
-                                <div key={event.transactionHash + index} className="flex flex-row w-full justify-between mb-1 text-[#747474]">
-                                    <div className='w-[20%] text-left'>{index + 1}</div>
-                                    <div className='w-[80%] text-left'>{truncateAddress(donor)}</div>
-                                    <div className='w-[80%] text-left font-medium text-blue-500 cursor-pointer underline underline-offset-2'>
-                                        <Link href={`https://sepolia.etherscan.io/tx/${event.transactionHash}`}>
-                                            {truncateAddress(event.transactionHash)}
-                                        </Link>
-                                    </div>
-                                    <div className='w-[50%] text-left'>{formattedAmount}</div>
+                            const { donor, amount } = event.args; // Destructure event parameters
+                            // Format donation amount
+                            // const formattedAmount = value ? ethers.formatEther(value) : "0";
+                            console.log("Event args:", event.args);
+
+                            const formattedAmount = ethers.formatEther(amount);
+                            // Optionally, you can add logic to fetch and format the block timestamp:
+                            // const donationDate = ... fetch block data from provider ...
+                            
+                            return (
+                            <div key={event.transactionHash + index} className="flex flex-row w-full justify-between mb-3 text-[#747474]">
+                                <div className='w-[20%] text-left'>{index + 1}</div>
+                                <div className='w-[80%] text-left'>{truncateAddress(donor)}</div>
+                                <div className='w-[80%] text-left font-medium text-blue-500 cursor-pointer underline underline-offset-2'>
+                                    <Link href={`https://sepolia.basescan.org/tx/${event.transactionHash}`}>
+                                        {truncateAddress(event.transactionHash)}
+                                    </Link>
                                 </div>
-                                );
+                                <div className='w-[30%] text-left'>{formattedAmount}</div>
+                            </div>
+                            );
                             })}
                         </div>
+                        </>
+                        :
+                        <></>
+                        }
                     </div>
                     
                     {campaign.organization.toLowerCase() !== address?.toLowerCase() && (
                     <div className='lg:mt-0 mt-8'>
                         <h1 className='text-white font-bold mb-4 text-lg'>FUND CAMPAIGN</h1>
+                        {campaign.approved ? 
                         <form onSubmit={handleDonate} className='px-8 py-12 flex flex-col bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
                             <p className='text-[#747474] text-sm'>Enter the amount that you would want to support this campaign with</p>
                             <input 
@@ -235,6 +248,11 @@ export default function DetailsPage () {
                             />
                             <button type="submit" className='w-full font-bold rounded-2xl bg-[var(--sblue)] text-black p-3 text-lg font bold cursor-pointer hover:bg-[var(--bold-blue)]'>Donate</button>
                         </form>
+                        :
+                        <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
+                            This campaign cannot be funded yet because it is yet to be approved. 
+                        </div>
+                         }
                     </div>
                     )}
                 </div>

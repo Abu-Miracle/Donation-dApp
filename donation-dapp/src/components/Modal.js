@@ -2,6 +2,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
+// BASE - https://base-sepolia.blockscout.com/tx/
+// OR - https://sepolia.basescan.org/tx/
+// SEPOLIA - https://sepolia.etherscan.io/tx/
+
 export function Modal({ isOpen, onClose, txHash }) {
   if (!isOpen) return null;
   
@@ -16,7 +20,7 @@ export function Modal({ isOpen, onClose, txHash }) {
               <span className="text-white text-xl mb-2 font-bold">Donation Successful! </span>
               <span className='text-[#747474] text-lg font-normal mb-1'>Transaction Hash:</span>
             </p>
-            <Link href={`https://sepolia.etherscan.io/tx/${txHash}`}>
+            <Link href={`https://sepolia.basescan.org/tx/${txHash}`}>
               <p className="text-blue-400 break-all text-[16px] mb-4 cursor-pointer">{txHash}</p>
             </Link>
           </>

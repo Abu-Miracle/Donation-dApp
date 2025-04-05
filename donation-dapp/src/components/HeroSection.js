@@ -15,12 +15,12 @@ export default function HeroSection() {
           </div>
           <div className='mt-8 lg:mt-14 flex flex-col gap-8 lg:gap-0 lg:flex-row'>
             <Link href="/donate">
-              <button className='bg-[var(--sblue)] text-black rounded-4xl text-[24px] font-semibold p-5 px-20 cursor-pointer hover:bg-[var(--light-blue)]'>
+              <button className='bg-[var(--sblue)] text-black rounded-full text-[20px] font-semibold p-5 px-16 cursor-pointer hover:bg-[var(--light-blue)] border-3 border-[var(--sblue)] hover:border-[var(--light-blue)]'>
                 Donate Now
               </button>
             </Link>
             <Link href="/newcampaign">
-              <button className='bg-transparent border-3 border-white text-white rounded-4xl text-[24px] font-semibold p-5 px-10 lg:ml-8 cursor-pointer hover:border-transparent hover:text-black hover:bg-[#E9ECEB]'>
+              <button className='bg-transparent border-3 border-white text-white rounded-full text-[20px] font-semibold p-5 px-8 lg:ml-8 cursor-pointer hover:border-transparent hover:text-black hover:bg-[#E9ECEB]'>
                 Create a Campaign
               </button>
             </Link>

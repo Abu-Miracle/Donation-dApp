@@ -59,8 +59,6 @@ export default function Donate() {
         return daysLeft.toString();
     }
 
-    const str = "https://ipfs.io/ipfs/bafybeibukfbp4iqdc6la4zzkwrnblbkupbx4vzuqa3rgnokkrhdv6g7uji";
-
     return(
         <div className="min-h-screen bg-black">
             <Navbar />
@@ -86,7 +84,7 @@ export default function Donate() {
                 </button>
             </div>
 
-            <div className="flex flex-start space-x-6 mt-8 px-10">
+            <div className="flex flex-start space-x-6 mt-8 px-10 border-b-2 mx-7 pb-5 border-[#1E1E1E]">
                 <button
                     className={selectedTab === "open" ? "bg-white text-black text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
                     onClick={() => setSelectedTab("open")}
@@ -117,9 +115,25 @@ export default function Donate() {
                     </div>
 
                     <div className='px-6 py-4'>
-                        <div className='mb-6'>
-                            <h2 className="text-white text-xl font-bold">{truncateTitle(campaign.name)}</h2>
-                            <p className="text-[#747474] text-[16px]">{truncateText(campaign.description)}</p>
+                        <div className='flex justify-between items-center'>
+                            <div className='mb-6'>
+                                <h2 className="text-white text-xl font-bold">{truncateTitle(campaign.name)}</h2>
+                                <p className="text-[#747474] text-[14px]">{truncateText(campaign.description)}</p>
+                            </div>
+
+                            <div className='mb-6'>
+                                {campaign.approved ? 
+                                    <> </>
+                                    :
+                                <Image
+                                    src="/locked.svg"
+                                    alt="Locked"
+                                    width={20}
+                                    height={20} 
+                                    className='mr-3'
+                                /> 
+                                }
+                            </div>
                         </div>
 
                         <div className='mb-6 flex flex-row justify-between items-center'>
@@ -151,19 +165,10 @@ export default function Donate() {
                                 </div>
                             </div>
 
-                            {campaign.approved ? 
+                            
                             <Link href={`/donate/${campaign.id}`}>
                                 <button className="text-[var(--sblue)] mt-2 text-[14px] cursor-pointer">See full details</button>
                             </Link>
-                             :
-                            <Image
-                                src="/locked.svg"
-                                alt="Locked"
-                                width={20}
-                                height={20}
-                                
-                            /> 
-                            }
                         </div>
                     </div>
                 </div>
