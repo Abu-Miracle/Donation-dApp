@@ -56,7 +56,7 @@ export default function NewCampaign() {
         try {
             setUploading(true);
             // Upload file to IPFS and get CID
-            const docIpfsHash = await uploadFileToIPFS(formData.document);
+            const { cid: docIpfsHash} = await uploadFileToIPFS(formData.document);
 
             // Optionally, upload the campaign image to IPFS if provided.
             let imageUrl = "";

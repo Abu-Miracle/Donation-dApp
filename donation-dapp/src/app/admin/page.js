@@ -76,7 +76,7 @@ export default function AdminPage() {
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
 
-    function truncateTitle(text, maxLength = 30) {
+    function truncateTitle(text, maxLength = 27) {
         if (!text) return '';
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
@@ -189,7 +189,7 @@ export default function AdminPage() {
                             </div>
                         </div>
 
-                        <div className='flex flex-row items-center justify-between'>
+                        <div className='flex flex-row justify-between items-center lg:flex-col lg:items-start xl:flex-row xl:justify-between'>
                             <div className='flex flex-row'>
                                 <div className='bg-gray-300 p-1 rounded-full mr-2'>
                                     <Image 
@@ -197,6 +197,7 @@ export default function AdminPage() {
                                     alt='eth'
                                     width={12}
                                     height={12}
+                                    className='w-4 h-4'
                                     />
                                 </div>
                                 <div>
