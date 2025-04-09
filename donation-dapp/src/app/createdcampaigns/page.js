@@ -100,7 +100,7 @@ export default function CreatedCampaigns() {
             {isLoading && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Loading campaigns...</p>}
             {isError && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>}
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-8 px-10 pb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-10 mt-8 px-10 pb-10">
                 {filteredCampaigns.map((campaign) =>   (
                 <div key={`${campaign.name}-${campaign.targetDate}`} className="bg-[var(--dark-gray)] rounded-xl ">
                     {/* Example Card */}

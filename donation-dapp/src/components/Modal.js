@@ -13,19 +13,23 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
             <p className="text-xl text-[#747474] text-center">
               {status === "approving" ? 
                 `Approving "${campaignName}"...` : 
+                status === "rejecting" ?
+                `Rejecting "${campaignName}"...` :
                 "Processing Donation..."
               }
             </p>
             <p className="text-[#747474] text-sm text-center mt-2 py-2">
-              Please confirm the transaction in your wallet
+              Please wait for confirmation of transaction in your wallet
             </p>
           </div>
         ) : (
           <>
             <p className='flex flex-col mb-4'>
               <span className="text-white text-xl font-bold">
-                {status === "approving" ? "Approval Successful!" : "Donation Successful!"}
-              </span>
+                {status === "approving" ? "Approval Successful!" : 
+                status === "rejecting" ? "Rejection Successful!" : 
+                "Donation Successful!"}
+            </span>
               {campaignName && (
                 <span className='text-[#747474] text-sm mt-1'>
                   Campaign: {campaignName}

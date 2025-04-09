@@ -16,8 +16,10 @@ export default function AdminPage() {
     const adminAddress = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
     const isAdmin = isConnected && address?.toLowerCase() === adminAddress?.toLowerCase();
     const [searchQuery, setSearchQuery] = useState("");
+
     const [campaigns, setCampaigns] = useState([]);
     const [selectedTab, setSelectedTab] = useState("open");
+    
 
     useEffect(() => {
         if (isConnected && !isAdmin) {
@@ -31,6 +33,8 @@ export default function AdminPage() {
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
         functionName: 'getAllCampaigns',
     });
+
+    console.log(campaign);
 
     useEffect(() => {
         if (campaign) {
@@ -58,10 +62,12 @@ export default function AdminPage() {
             campaign.isDeleted === false &&
             matchesSearch
           );
+        } else if (selectedTab === "rejected") {
+            return campaign.status === 2 && !campaign.isDeleted && matchesSearch;
         } else if (selectedTab === "open") {
-          return campaign.approved === true && !campaign.isDeleted && matchesSearch;
+            return campaign.approved === true && !campaign.isDeleted && matchesSearch;
         } else if (selectedTab === "closed") {
-          return campaign.approved === false && !campaign.isDeleted && matchesSearch;
+            return (campaign.approved === false && campaign.status === 0) && !campaign.isDeleted && matchesSearch;
         }
         return false;
     });
@@ -138,11 +144,17 @@ export default function AdminPage() {
                 >
                     Due for fund release 
                 </button>
+                <button
+                    className={selectedTab === "rejected" ? "bg-white text-black text-sm font-[600] px-4 py-2  rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                    onClick={() => setSelectedTab("rejected")}
+                >
+                    Rejected Campaigns
+                </button>
             </div>
 
             {/* Display Filtered Campaigns */}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-8 px-10 pb-10">
+            <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-10 mt-8 px-10 pb-10">
                 {isLoading && <p className='text-white text-center mt-16 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Loading campaigns...</p>}
                 {isError && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>}
                 {filteredCampaigns.map((campaign) =>  (
@@ -189,7 +201,7 @@ export default function AdminPage() {
                             </div>
                         </div>
 
-                        <div className='flex flex-row justify-between items-center lg:flex-col lg:items-start xl:flex-row xl:justify-between'>
+                        <div className='flex flex-row justify-between items-center xl:flex-row xl:justify-between'>
                             <div className='flex flex-row'>
                                 <div className='bg-gray-300 p-1 rounded-full mr-2'>
                                     <Image 

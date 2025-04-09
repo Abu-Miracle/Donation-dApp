@@ -56,7 +56,7 @@ export default function NewCampaign() {
         try {
             setUploading(true);
             // Upload file to IPFS and get CID
-            const { cid: docIpfsHash} = await uploadFileToIPFS(formData.document);
+            const docIpfsHash = await uploadFileToIPFS(formData.document);
 
             // Optionally, upload the campaign image to IPFS if provided.
             let imageUrl = "";
@@ -111,6 +111,7 @@ export default function NewCampaign() {
             setUploading(false);
         }
     };
+    // 1745107200
       
     return(
         <div className="min-h-screen bg-black pb-20">

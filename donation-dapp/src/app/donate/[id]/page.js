@@ -24,6 +24,9 @@ export default function DetailsPage () {
 
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [isApproving, setIsApproving] = useState(false);
+
+    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+    const [isRejecting, setIsRejecting] = useState(false);
     
     const { address, isConnected } = useAccount();
     const adminAddress = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
@@ -64,6 +67,7 @@ export default function DetailsPage () {
     const handleClose = () => {
         setIsModalOpen(false);
         setIsApproving(false); // If you have approval state
+        setIsRejecting(false);
         setTxHash(null); // Optional: reset transaction hash
     };
 
@@ -108,6 +112,33 @@ export default function DetailsPage () {
         if (!address) return '';
         return `${address.substring(0, 10)}...${address.substring(address.length - 4)}`;
     }
+
+    const handleRejectConfirmation = () => {
+        setIsRejectModalOpen(true);
+    };
+      
+    const handleReject = async () => {
+        setIsRejectModalOpen(false);
+        setIsRejecting(true);
+        setIsModalOpen(true);
+        
+        try {
+          const result = await writeContractAsync({
+            abi,
+            address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+            functionName: 'rejectCampaign',
+            args: [parseInt(id), ""],
+          });
+          
+          setTxHash(result);
+          console.log("Rejection transaction sent:", result);
+          
+        } catch (error) {
+          console.error("Error rejecting campaign:", error);
+          setIsRejecting(false);
+          setIsModalOpen(false);
+        }
+    };
 
     const [donors, amounts] = donorsAndAmounts || [];
 
@@ -273,7 +304,7 @@ export default function DetailsPage () {
                                 <div className='bg-[var(--dark-gray)] w-[25vw] text border-[1px] px-6 py-3 border-[#747474] text-blue-500 cursor-pointer underline underline-offset-3 font-semibold'>
                                     <Link href={`https://maroon-high-horse-665.mypinata.cloud/ipfs/${campaign.milestoneIPFSHash}`}>View Document</Link>
                                 </div>
-                                {!campaign.approved && (
+                                {(!campaign.approved && campaign.status === 0) && (
                                     <div className='flex flex-col'>
                                         <button 
                                         onClick={handleApproveConfirmation}
@@ -282,15 +313,47 @@ export default function DetailsPage () {
                                         >
                                         {isApproving ? "Approving..." : "Approve Campaign"}
                                         </button>
-                                        <button className='font-bold px-3 py-3 mt-4 bg-red-500 hover:bg-[#cf3c3e]  text-white rounded-lg w-[25vw] cursor-pointer'>Reject Campaign</button>
+                                        <button 
+                                        onClick={handleRejectConfirmation}
+                                        className='font-bold px-3 py-3 mt-4 bg-red-500 hover:bg-[#cf3c3e] text-white rounded-lg w-[25vw] cursor-pointer'
+                                        disabled={isRejecting} >
+                                        {isRejecting ? "Rejecting..." : "Reject Campaign"}
+                                        </button>
                                     </div>
                                 )}
                             </div>
                         )}
                     </div>
 
+                    {isRejectModalOpen && (
+                    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-[#0E0E0E] p-8 rounded-xl max-w-md w-full mx-4">
+                        <h3 className="text-white text-xl font-bold mb-4">
+                            Confirm Rejection
+                        </h3>
+                        <p className="text-[#747474] mb-6">
+                            Are you sure you want to reject "{campaign.name}" Campaign?
+                        </p>
+                        <div className="flex justify-end gap-4">
+                            <button
+                            onClick={() => setIsRejectModalOpen(false)}
+                            className="px-6 py-2 text-white bg-[#747474] rounded-lg hover:bg-[#5a5a5a]"
+                            >
+                            Cancel
+                            </button>
+                            <button
+                            onClick={handleReject}
+                            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-[#cf3c3e]"
+                            >
+                            Reject
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                    )}
+
                     {isConfirmModalOpen && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
                         <div className="bg-[#0E0E0E] p-8 rounded-xl max-w-md w-full mx-4">
                         <h3 className="text-white text-xl font-bold mb-4">
                             Confirm Approval
@@ -318,9 +381,13 @@ export default function DetailsPage () {
                     
                     <div className='lg:mt-0 mt-8'>
                         <h1 className='text-white font-bold mb-4 text-lg'>FUND CAMPAIGN</h1>
-                        {!campaign.approved ? (
+                        {(!campaign.approved && campaign.status === 0) ? (
                             <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
                                 This campaign cannot be funded yet because it is yet to be approved.
+                            </div>
+                        ) : (!campaign.approved && campaign.status === 2) ? (
+                            <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
+                                This campaign cannot be funded because the campaign has been rejected.
                             </div>
                         ) : campaign.organization.toLowerCase() === address?.toLowerCase() ? (
                             <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
@@ -348,7 +415,7 @@ export default function DetailsPage () {
                 isOpen={isModalOpen} 
                 onClose={handleClose}
                 txHash={txHash}
-                status={isApproving ? "approving" : "donating"}
+                status={isApproving ? "approving" : isRejecting ? "rejecting" : "donating"}
                 campaignName={campaign?.name}
                 />
             </div>

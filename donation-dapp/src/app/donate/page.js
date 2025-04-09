@@ -28,7 +28,7 @@ export default function Donate() {
     console.log(campaign);
 
     const filteredCampaigns = campaigns.filter((campaign) => {
-        const matchesTab = selectedTab === "open" ? campaign.approved : !campaign.approved;
+        const matchesTab = selectedTab === "open" ? campaign.approved : !campaign.approved && campaign.status !== 2;
         const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesTab && matchesSearch;
     });
@@ -103,7 +103,7 @@ export default function Donate() {
             {isLoading && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Loading campaigns...</p>}
             {isError && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-8 px-10 pb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-10 mt-8 px-10 pb-10">
             {filteredCampaigns.map((campaign) =>   (
                 <div key={`${campaign.name}-${campaign.targetDate}`} className="bg-[var(--dark-gray)] rounded-xl ">
                     {/* Example Card */}
@@ -148,7 +148,7 @@ export default function Donate() {
                             </div>
                         </div>
 
-                        <div className='flex flex-row justify-between items-center lg:flex-col lg:items-start xl:flex-row xl:justify-between'>
+                        <div className='flex flex-row justify-between items-center xl:flex-row xl:justify-between'>
                             <div className='flex flex-row'>
                                 <div className='bg-gray-300 p-1 rounded-full mr-2 whitespace-nowrap'>
                                     <Image 
