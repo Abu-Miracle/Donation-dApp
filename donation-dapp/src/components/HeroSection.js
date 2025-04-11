@@ -2,6 +2,8 @@ import Link from 'next/link';
 import Navbar from './Navbar';
 
 export default function HeroSection() {
+
+  
   return (
     <div className="min-h-screen bg-[url('/background.svg')] bg-cover bg-center bg-fixed">
       <div className="min-h-screen bg-black/65 flex flex-col">

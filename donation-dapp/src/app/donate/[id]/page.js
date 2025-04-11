@@ -197,12 +197,14 @@ export default function DetailsPage () {
         }
       };
 
-    if (!campaign) return <div className='min-h-screen w-full text-white bg-black text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>No campaign found with ID: {id}</div>;
+    if (!campaign) return <div className='min-h-screen w-full bg-black'>
+        <Image src="/loading.gif" alt="Locked" width={30} height={30} className='bg-black absolute w-45 h-45 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' />
+    </div>;
 
     return(
         <div className='min-h-screen bg-black'>
             <Navbar />
-
+            
             {isLoading && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Loading campaigns...</p>}
             {isError && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>}
             <div className='flex flex-col justify-center items-center mt-16 px-10 lg:px-0 pb-20'>

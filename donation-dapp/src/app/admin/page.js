@@ -45,13 +45,6 @@ export default function AdminPage() {
     // Current timestamp (in seconds)
     const currentTimestamp = Math.floor(Date.now() / 1000);
 
-    if (!isConnected) {
-        return <p className="text-white text-center mt-8">Connect your wallet to view this page.</p>;
-    }
-    if (!isAdmin) {
-        return <p className="text-white text-center mt-8">You are not authorized to view this page.</p>;
-    }
-
     const filteredCampaigns = campaigns.filter((campaign) => {
         const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase());
         if (selectedTab === "release") {
@@ -155,8 +148,21 @@ export default function AdminPage() {
             {/* Display Filtered Campaigns */}
 
             <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-10 mt-8 px-10 pb-10">
-                {isLoading && <p className='text-white text-center mt-16 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Loading campaigns...</p>}
-                {isError && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>}
+                {!isConnected && (<div className='flex flex-col'>
+                    <p className='text-white text-center absolute top-2/3 left-1/2 font-semibold transform -translate-x-1/2 -translate-y-1/2 mb-4'>Please connect an Ethereum wallet to view campaigns</p>
+                    <Image src="/loading.gif" alt="loading" width={30} height={30} className='absolute w-30 h-30 top-3/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2' />
+                </div>)}
+                {isLoading && isConnected && (
+                    <Image 
+                    src="/loading.gif"
+                    alt="Locked"
+                    width={30}
+                    height={30} 
+                    className='absolute w-30 h-30 top-3/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
+                    />
+                )}
+                {isConnected && isError && (<p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>)}
+
                 {filteredCampaigns.map((campaign) =>  (
                 <div key={`${campaign.name}-${campaign.targetDate}`} className="bg-[var(--dark-gray)] rounded-xl ">
                     {/* Example Card */}
