@@ -97,8 +97,20 @@ export default function CreatedCampaigns() {
             </div>
 
             {/* Display Filtered Campaigns */}
-            {isLoading && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Loading campaigns...</p>}
-            {isError && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>}
+            {!isConnected && (<div className='flex flex-col'>
+                <p className='text-white text-center absolute top-1/2 left-1/2 font-semibold transform -translate-x-1/2 -translate-y-1/2 mb-4'>Please connect an Ethereum wallet to view campaigns</p>
+                <Image src="/loading.gif" alt="loading" width={30} height={30} className='absolute w-30 h-30 top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2' />
+            </div>)}
+            {isLoading && isConnected && (
+                <Image 
+                src="/loading.gif"
+                alt="Locked"
+                width={30}
+                height={30} 
+                className='absolute w-50 h-50 top-3/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
+                />
+            )}
+            {isConnected && isError && (<p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>)}
             
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-10 mt-8 px-10 pb-10">
                 {filteredCampaigns.map((campaign) =>   (

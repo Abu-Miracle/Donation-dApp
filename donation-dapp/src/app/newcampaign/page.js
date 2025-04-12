@@ -233,7 +233,7 @@ export default function NewCampaign() {
                             <div className="absolute inset-0 px-6 py-3 flex items-center pointer-events-none">
                                 <span className={`text-[18px] font-light mt-9 ${fileName ? 'text-white' : 'text-[#747474]'}`}>
                                     {fileName || 
-                                    <p className='items-center flex'> <span className='text-4xl mr-2 block'>+</span> <span className='block'>Upload a PDF file with evidence of milestone achievement concerning the campaign</span> 
+                                    <p className='items-center flex cursor-pointer'> <span className='cursor-pointer text-4xl mr-2 block'>+</span> <span className='block'>Upload a PDF file with evidence of milestone achievement concerning the campaign</span> 
                                     </p>}
                                 </span>
                             </div>
