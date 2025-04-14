@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
+import { ethers } from 'ethers';
 import Link from 'next/link';
 
-export function Modal({ isOpen, onClose, txHash, status = "donating", campaignName }) {
+export function Modal({ isOpen, onClose, txHash, status = "donating", campaignName, raisedAmount }) {
   if (!isOpen) return null;
   
   return (
@@ -11,13 +12,15 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
         {!txHash ? (
           <div className="my-4">
             <p className="text-xl text-[#747474] text-center">
-              {status === "approving" ? 
-                `Approving "${campaignName}"...` : 
-                status === "rejecting" ?
-                `Rejecting "${campaignName}"...` :
-                "Processing Donation..."
-              }
-            </p>
+            {status === "approving" ? 
+              `Approving "${campaignName}"...` : 
+              status === "rejecting" ?
+              `Rejecting "${campaignName}"...` :
+              status === "releasing" ?
+              `Releasing ${Number(ethers.formatEther(raisedAmount))} ETH to ${campaignName}...` :
+              "Processing Donation..."
+            }
+          </p>
             <p className="text-[#747474] text-sm text-center mt-2 py-2">
               Please wait for confirmation of transaction in your wallet
             </p>
@@ -25,10 +28,11 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
         ) : (
           <>
             <p className='flex flex-col mb-4'>
-              <span className="text-white text-xl font-bold">
-                {status === "approving" ? "Approval Successful!" : 
-                status === "rejecting" ? "Rejection Successful!" : 
-                "Donation Successful!"}
+            <span className="text-white text-xl font-bold">
+              {status === "approving" ? "Approval Successful!" : 
+              status === "rejecting" ? "Rejection Successful!" : 
+              status === "releasing" ? "Funds Released Successfully!" : 
+              "Donation Successful!"}
             </span>
               {campaignName && (
                 <span className='text-[#747474] text-sm mt-1'>

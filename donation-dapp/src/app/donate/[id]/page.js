@@ -27,6 +27,9 @@ export default function DetailsPage () {
 
     const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
     const [isRejecting, setIsRejecting] = useState(false);
+
+    const [isReleaseModalOpen, setIsReleaseModalOpen] = useState(false);
+    const [isReleasing, setIsReleasing] = useState(false);
     
     const { address, isConnected } = useAccount();
     const adminAddress = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
@@ -64,10 +67,27 @@ export default function DetailsPage () {
         }
     }, [campaigns, id]);
 
+    const [currentTime, setCurrentTime] = useState(Math.floor(Date.now() / 1000));
+
+    useEffect(() => {
+    const interval = setInterval(() => {
+        setCurrentTime(Math.floor(Date.now() / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+    }, []);
+
+    const totalSeconds = campaign ? Number(campaign.targetDate) - currentTime : 0;
+    const days = Math.floor(totalSeconds / (24 * 3600));
+    const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
     const handleClose = () => {
         setIsModalOpen(false);
         setIsApproving(false); // If you have approval state
         setIsRejecting(false);
+        setIsReleasing(false);
         setTxHash(null); // Optional: reset transaction hash
     };
 
@@ -115,6 +135,33 @@ export default function DetailsPage () {
 
     const handleRejectConfirmation = () => {
         setIsRejectModalOpen(true);
+    };
+
+    const handleReleaseConfirmation = () => {
+        setIsReleaseModalOpen(true);
+    };
+      
+    const handleRelease = async () => {
+        setIsReleaseModalOpen(false);
+        setIsReleasing(true);
+        setIsModalOpen(true);
+        
+        try {
+          const result = await writeContractAsync({
+            abi,
+            address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+            functionName: 'releaseFunds', // Verify your contract's function name
+            args: [parseInt(id)],
+          });
+          
+          setTxHash(result);
+          console.log("Release transaction sent:", result);
+          
+        } catch (error) {
+          console.error("Error releasing funds:", error);
+          setIsReleasing(false);
+          setIsModalOpen(false);
+        }
     };
       
     const handleReject = async () => {
@@ -219,11 +266,19 @@ export default function DetailsPage () {
                         
                         <div className='flex flex-col justify-between text-center'>
                             <div className='w-28 aspect-square'>
+                                {campaign.fundsReleased ? 
+                                <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>--</div>
+                                : 
                                 <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>{daysLeft(campaign.targetDate)}</div>
+                                }
                                 <div className='bg-[#1E1E1E] text-sm text-[#747474] font-semibold w-full h-[40%] flex justify-center items-center rounded-b-xl'>Days left</div>
                             </div>
                             <div className=' w-28 aspect-square'>
+                                {campaign.fundsReleased ? 
+                                 <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>--</div>
+                                :
                                 <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>{ethers.formatEther(campaign.raisedAmount)}</div>
+                                }
                                 <div className='bg-[#1E1E1E] text-sm text-[#747474] font-semibold w-full h-[40%] flex justify-center items-center rounded-b-xl'>{`Raised of ${ethers.formatEther(campaign.targetAmount)}`}</div>
                             </div>
                             <div className='w-28 aspect-square'>
@@ -295,10 +350,23 @@ export default function DetailsPage () {
                                 })
                             )}
                         </div>
+                        
+                        
                         </>
                         :
                         <></>
                         }
+                        {totalSeconds > 0 ? (
+                            <div className='flex flex-col mt-10'> 
+                             <h1 className='text-white font-bold mb-4 text-lg'>TIME LEFT</h1>
+                            <div className='bg-black w-full lg:w-[25vw] text border-[1px] px-6 py-3 border-[#747474] text-xl text-[#747474]'>
+                                {days}d {hours}h {minutes}m {seconds}s
+                            </div>
+                            </div>
+                        ) : (
+                            <> </>
+                        )}
+                        
 
                         {isAdmin && (
                             <div className='flex flex-col mt-10'>
@@ -306,6 +374,29 @@ export default function DetailsPage () {
                                 <div className='bg-[var(--dark-gray)] w-[25vw] text border-[1px] px-6 py-3 border-[#747474] text-blue-500 cursor-pointer underline underline-offset-3 font-semibold'>
                                     <Link href={`https://maroon-high-horse-665.mypinata.cloud/ipfs/${campaign.milestoneIPFSHash}`}>View Document</Link>
                                 </div>
+
+
+                                <div className='mt-10'>
+                                    <h1 className='text-white font-bold mb-4 text-lg'>RELEASE FUNDS</h1>
+                                    {campaign.fundsReleased ? (
+                                    <div className='bg-black w-[25vw] text border-[1px] px-6 py-3 border-[#747474] text-[#747474] font-medium'>
+                                        Funds Released
+                                    </div>
+                                    ) : totalSeconds > 0 ? (
+                                    <div className='bg-black w-[25vw] text border-[1px] px-6 py-3 border-[#747474] text-[#747474] font-medium'>
+                                        Funds Cannot be released yet
+                                    </div>
+                                    ) : (
+                                    <button 
+                                        onClick={handleReleaseConfirmation}
+                                        className='bg-[var(--sblue)] w-[25vw] mt-10 px-6 py-3 text-black cursor-pointer font-semibold rounded-lg hover:bg-[var(--bold-blue)]'
+                                        disabled={isReleasing}
+                                    >
+                                        {isReleasing ? "Releasing..." : "Release Funds"}
+                                    </button>
+                                    )}
+                                </div>
+
                                 {(!campaign.approved && campaign.status === 0) && (
                                     <div className='flex flex-col'>
                                         <button 
@@ -380,6 +471,33 @@ export default function DetailsPage () {
                         </div>
                     </div>
                     )}
+
+                    {isReleaseModalOpen && (
+                    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-[#0E0E0E] p-8 rounded-xl max-w-md w-full mx-4">
+                        <h3 className="text-white text-xl font-bold mb-4">
+                            Confirm Funds Release
+                        </h3>
+                        <p className="text-[#747474] mb-6">
+                            Releasing {Number(ethers.formatEther(campaign.raisedAmount))} ETH to {campaign.name}...
+                        </p>
+                        <div className="flex justify-end gap-4">
+                            <button
+                            onClick={() => setIsReleaseModalOpen(false)}
+                            className="px-6 py-2 text-white bg-[#747474] rounded-lg hover:bg-[#5a5a5a]"
+                            >
+                            Cancel
+                            </button>
+                            <button
+                            onClick={handleRelease}
+                            className="px-6 py-2 bg-[var(--sblue)] text-black rounded-lg hover:bg-[var(--bold-blue)]"
+                            >
+                            Continue
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                    )}
                     
                     <div className='lg:mt-0 mt-8'>
                         <h1 className='text-white font-bold mb-4 text-lg'>FUND CAMPAIGN</h1>
@@ -390,6 +508,10 @@ export default function DetailsPage () {
                         ) : (!campaign.approved && campaign.status === 2) ? (
                             <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
                                 This campaign cannot be funded because the campaign has been rejected.
+                            </div>
+                        ) : (Number(campaign.targetDate) <= Math.floor(Date.now() / 1000)) ? (
+                            <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
+                              Target date has been reached. Funding closed.
                             </div>
                         ) : campaign.organization.toLowerCase() === address?.toLowerCase() ? (
                             <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
@@ -417,8 +539,14 @@ export default function DetailsPage () {
                 isOpen={isModalOpen} 
                 onClose={handleClose}
                 txHash={txHash}
-                status={isApproving ? "approving" : isRejecting ? "rejecting" : "donating"}
+                status={
+                    isApproving ? "approving" : 
+                    isRejecting ? "rejecting" : 
+                    isReleasing ? "releasing" : 
+                    "donating"
+                }
                 campaignName={campaign?.name}
+                targetAmount={campaign?.targetAmount}
                 />
             </div>
  

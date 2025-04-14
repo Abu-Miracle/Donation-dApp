@@ -58,9 +58,11 @@ export default function AdminPage() {
         } else if (selectedTab === "rejected") {
             return campaign.status === 2 && !campaign.isDeleted && matchesSearch;
         } else if (selectedTab === "open") {
-            return campaign.approved === true && !campaign.isDeleted && matchesSearch;
+            return campaign.approved === true && campaign.fundsReleased === false && !campaign.isDeleted && matchesSearch;
         } else if (selectedTab === "closed") {
             return (campaign.approved === false && campaign.status === 0) && !campaign.isDeleted && matchesSearch;
+        } else if (selectedTab === "funded") {
+            return campaign.fundsReleased == true && matchesSearch;
         }
         return false;
     });
@@ -143,6 +145,12 @@ export default function AdminPage() {
                 >
                     Rejected Campaigns
                 </button>
+                <button
+                    className={selectedTab === "funded" ? "bg-white text-black text-sm font-[600] px-4 py-2  rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                    onClick={() => setSelectedTab("funded")}
+                >
+                    Funded Campaigns
+                </button>
             </div>
 
             {/* Display Filtered Campaigns */}
@@ -196,10 +204,16 @@ export default function AdminPage() {
                         </div>
 
                         <div className='mb-6 flex flex-row justify-between items-center'>
+                            {campaign.fundsReleased ? 
+                            <div>
+                                <p className="text-white text-[16px] font-bold">Campaign Funded</p>
+                            </div>
+                            :
                             <div>
                                 <p className="text-white font-bold text-[18px]"> {ethers.formatEther(campaign.raisedAmount)} ETH</p>
                                 <p className="text-[#747474] text-[14px]">Raised of {ethers.formatEther(campaign.targetAmount)} ETH</p>
                             </div>
+                             }
 
                             <div className='flex flex-col items-center'>
                                 <p className="text-white font-bold text-[18px]">{daysLeft(campaign.targetDate)}</p>
