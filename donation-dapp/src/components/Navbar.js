@@ -25,9 +25,9 @@ export default function Navbar() {
           alt="BlockFund Logo"
           width={28}
           height={28}
-          className="w-6 h-6 lg:w-8 lg:h-8"
+          className="w-8 md:w-6 h-8 md:h-6 lg:w-8 lg:h-8"
         />
-        <p className="text-xl lg:text-2xl text-[var(--sblue)]">
+        <p className="hidden md:block text-xl lg:text-2xl text-[var(--sblue)]">
           Block<span className="font-bold">Fund</span>
         </p>
       </div>

@@ -205,20 +205,27 @@ export default function AdminPage() {
 
                         <div className='mb-6 flex flex-row justify-between items-center'>
                             {campaign.fundsReleased ? 
-                            <div>
+                            <>
+                             <div>
                                 <p className="text-white text-[16px] font-bold">Campaign Funded</p>
                             </div>
+                             <div className='flex flex-col items-center'>
+                                <p className="text-white font-bold text-[18px]">--</p>
+                                <p className="text-[#747474] text-[14px]">days left</p>
+                            </div>
+                            </>
                             :
+                            <>
                             <div>
                                 <p className="text-white font-bold text-[18px]"> {ethers.formatEther(campaign.raisedAmount)} ETH</p>
                                 <p className="text-[#747474] text-[14px]">Raised of {ethers.formatEther(campaign.targetAmount)} ETH</p>
                             </div>
-                             }
-
                             <div className='flex flex-col items-center'>
                                 <p className="text-white font-bold text-[18px]">{daysLeft(campaign.targetDate)}</p>
                                 <p className="text-[#747474] text-[14px]">days left</p>
                             </div>
+                            </>
+                            }
                         </div>
 
                         <div className='flex flex-row justify-between items-center xl:flex-row xl:justify-between'>

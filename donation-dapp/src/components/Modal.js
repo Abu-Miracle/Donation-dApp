@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Modal({ isOpen, onClose, txHash, status = "donating", campaignName, raisedAmount }) {
   if (!isOpen) return null;
@@ -17,7 +18,7 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
               status === "rejecting" ?
               `Rejecting "${campaignName}"...` :
               status === "releasing" ?
-              `Releasing ${Number(ethers.formatEther(raisedAmount))} ETH to ${campaignName}...` :
+              `Releasing ${ethers.formatEther(raisedAmount)} ETH to ${campaignName}...` :
               "Processing Donation..."
             }
           </p>
@@ -32,10 +33,21 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
               {status === "approving" ? "Approval Successful!" : 
               status === "rejecting" ? "Rejection Successful!" : 
               status === "releasing" ? "Funds Released Successfully!" : 
-              "Donation Successful!"}
+              <div className='flex flex-col justify-center items-center'>
+                <Image
+                src="/verified.svg"
+                alt="Locked"
+                width={30}
+                height={30}
+                className='w-20 h-20 mb-2'
+                />
+                <span className='text-2xl'>Donation Successful!</span>
+                <span className='mt-1 text-lg font-medium'>Thank you for your support</span>
+              </div>
+              }
             </span>
               {campaignName && (
-                <span className='text-[#747474] text-sm mt-1'>
+                <span className='text-[#747474] text-sm mt-3'>
                   Campaign: {campaignName}
                 </span>
               )}
@@ -56,14 +68,14 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
         <div className="flex justify-end gap-4">
           {status === "donating" && txHash && (
             <button
-              className="bg-[var(--sblue)] text-black px-4 py-2 rounded-lg font-semibold hover:bg-[var(--bold-blue)] transition-colors"
+              className="bg-[var(--sblue)] text-black px-4 py-2 rounded-lg cursor-pointer font-semibold hover:bg-[var(--bold-blue)] transition-colors"
               onClick={() => window.location.href = '/donate'}
             >
               Browse More
             </button>
           )}
           <button
-            className="bg-[#585858] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#6b6b6b] transition-colors"
+            className="bg-[#585858] text-white px-4 py-2 rounded-lg cursor-pointer font-semibold hover:bg-[#6b6b6b] transition-colors"
             onClick={onClose}
           >
             {txHash ? "Close" : "Cancel"}

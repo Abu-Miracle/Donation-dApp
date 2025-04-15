@@ -1,6 +1,6 @@
 export default function HowItWorks() {
     return(
-        <div className="h-auto bg-black my-auto flex flex-col justify-center text-center items-center py-20 px-30">
+        <div className="h-auto bg-black my-auto flex flex-col justify-center text-center items-center py-30 md:py-20 px-10 md:px-30">
             <div className="justify-center">
                 <h1 className="text-white text-4xl font-bold">How It Works</h1>
                 <p className="mt-8 text-[#E9ECEB] text-[20px] font-thin">Effortlessly connect your wallet, select a verified campaign, donate securely  <br /> <span>through our transparent blockchain platform</span></p>

@@ -349,9 +349,7 @@ export default function DetailsPage () {
                                     );
                                 })
                             )}
-                        </div>
-                        
-                        
+                        </div>  
                         </>
                         :
                         <></>
@@ -389,7 +387,7 @@ export default function DetailsPage () {
                                     ) : (
                                     <button 
                                         onClick={handleReleaseConfirmation}
-                                        className='bg-[var(--sblue)] w-[25vw] mt-10 px-6 py-3 text-black cursor-pointer font-semibold rounded-lg hover:bg-[var(--bold-blue)]'
+                                        className='bg-[var(--sblue)] w-[25vw] px-6 py-3 text-black cursor-pointer font-semibold rounded-lg hover:bg-[var(--bold-blue)]'
                                         disabled={isReleasing}
                                     >
                                         {isReleasing ? "Releasing..." : "Release Funds"}
@@ -479,7 +477,7 @@ export default function DetailsPage () {
                             Confirm Funds Release
                         </h3>
                         <p className="text-[#747474] mb-6">
-                            Releasing {Number(ethers.formatEther(campaign.raisedAmount))} ETH to {campaign.name}...
+                            Releasing {ethers.formatEther(campaign.raisedAmount)} ETH to {campaign.name}...
                         </p>
                         <div className="flex justify-end gap-4">
                             <button
@@ -509,11 +507,15 @@ export default function DetailsPage () {
                             <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
                                 This campaign cannot be funded because the campaign has been rejected.
                             </div>
-                        ) : (Number(campaign.targetDate) <= Math.floor(Date.now() / 1000)) ? (
+                        ) : ((Number(campaign.targetDate) <= Math.floor(Date.now() / 1000)) && !campaign.fundsReleased) ? (
                             <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
                               Target date has been reached. Funding closed.
                             </div>
-                        ) : campaign.organization.toLowerCase() === address?.toLowerCase() ? (
+                        ) : (campaign.fundsReleased) ? (
+                            <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
+                              Funds have been released. Funding closed.
+                            </div>
+                        ): campaign.organization.toLowerCase() === address?.toLowerCase() ? (
                             <div className='px-8 py-12 flex text-[#747474] bg-[#0E0E0E] rounded-xl justify-center items-center w-full lg:w-[25vw] gap-10'>
                                 You cannot donate to your own campaign
                             </div>
@@ -526,8 +528,9 @@ export default function DetailsPage () {
                                     id="amount" 
                                     placeholder="Amount in ETH"
                                     value={donationAmount}
+                                    min="0"
                                     onChange={(e) => setDonationAmount(e.target.value)}
-                                    className='bg-[#0E0E0E] border-2 border-[#747474] py-3 px-3 text-[#747474] w-full'
+                                    className='bg-[#0E0E0E] border-1 border-[#747474] py-3 px-3 text-[#747474] w-full'
                                 />
                                 <button type="submit" className='w-full font-bold rounded-2xl bg-[var(--sblue)] text-black p-3 text-lg font bold cursor-pointer hover:bg-[var(--bold-blue)]'>Donate</button>
                             </form>
@@ -546,7 +549,7 @@ export default function DetailsPage () {
                     "donating"
                 }
                 campaignName={campaign?.name}
-                targetAmount={campaign?.targetAmount}
+                raisedAmount={Number(campaign?.raisedAmount)}
                 />
             </div>
  

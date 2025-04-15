@@ -114,11 +114,11 @@ export default function NewCampaign() {
     // 1745107200
       
     return(
-        <div className="min-h-screen bg-black pb-20">
+        <div className="min-h-screen bg-black md:pb-20">
             <Navbar />
 
-            <div className='justify-center mx-auto mt-18 h-auto bg-[#0E0E0E] w-[80%] px-28 py-16 rounded-3xl'>
-                <h1 className='text-white text-center font-bold text-xl mb-7'>Create a Campaign</h1>
+            <div className=' justify-center md:mx-auto md:mt-18 h-auto md:bg-[#0E0E0E] w-full md:w-[80%] px-10 md:px-20 lg:px-28 py-16 rounded-3xl'>
+                <h1 className='text-white md:text-center font-bold text-2xl md:text-xl mb-7'>Create a Campaign</h1>
 
                 <form action="" method="" onSubmit={handleSubmit}>
                     <div className="mb-14">
@@ -150,7 +150,7 @@ export default function NewCampaign() {
                         />
                     </div>
 
-                    <div className='flex flex-row justify-center'>
+                    <div className='flex md:mb-0 mb-14 flex-col md:flex-row justify-center'>
                         <div className="mb-14 w-full">
                             <label htmlFor="targetAmount" className="block mb-2 text-lg text-white font-bold">Target Amount (ETH)*</label>
                             <input
@@ -160,12 +160,13 @@ export default function NewCampaign() {
                                 placeholder="Amount in ETH"
                                 value={formData.targetAmount}
                                 onChange={handleChange}
+                                min="0"
                                 required
                                 className="w-full px-6 py-3 border text-white text-[16px] font-light border-[#747474] rounded"
                             />
                         </div>
                         
-                        <div className="ml-4 w-full">
+                        <div className="md:ml-4 w-full">
                             <label htmlFor="targetDate" className="block mb-2 text-lg text-white font-bold">Target Date*</label>
                             <input
                                 type="date"
@@ -205,7 +206,7 @@ export default function NewCampaign() {
                             {imageFileName && 
                                 <button 
                                     type="button"
-                                    className="absolute right-7 top-[50%] font-bold -translate-y-1/2 text-white"
+                                    className="absolute right-7 top-[50%] font-bold -translate-y-1/2 text-white "
                                     onClick={() => {
                                         setImageFileName('');
                                         setFormData({ ...formData, image: null });
@@ -228,7 +229,7 @@ export default function NewCampaign() {
                                 accept="application/pdf"
                                 onChange={handleChange}
                                 required
-                                className="w-full px-6 py-6 border text-transparent text-[16px] font-light border-[#747474] rounded cursor-pointer"
+                                className="w-full px-6 py-14 md:py-6 border text-transparent text-[16px] font-light border-[#747474] rounded cursor-pointer"
                             />
                             <div className="absolute inset-0 px-6 py-3 flex items-center pointer-events-none">
                                 <span className={`text-[18px] font-light mt-9 ${fileName ? 'text-white' : 'text-[#747474]'}`}>
@@ -254,7 +255,7 @@ export default function NewCampaign() {
                         </div>
                     </div>
 
-                    <button type="submit" className="bg-[var(--sblue)] text-black py-4 px-6 font-bold text-lg rounded-2xl hover:bg-[var(--light-blue)] block mx-auto mt-16">
+                    <button type="submit" className="bg-[var(--sblue)] text-black py-4 px-6 font-bold text-lg rounded-lg md:rounded-2xl hover:bg-[var(--light-blue)] block mx-auto mt-10 md:mt-16">
                     {uploading ? 'Uploading...' : 'Submit New Campaign'}
                     </button>
 
