@@ -254,7 +254,7 @@ export default function DetailsPage () {
             
             {isLoading && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Loading campaigns...</p>}
             {isError && <p className='text-white text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>Error loading campaigns.</p>}
-            <div className='flex flex-col justify-center items-center mt-16 px-10 lg:px-0 pb-20'>
+            <div className='flex flex-col justify-center items-center mt-16 px-7 lg:px-0 pb-20'>
                 <div className='flex flex-col'>
                     <div className='flex flex-row gap-10'> 
                         <div>
@@ -291,12 +291,12 @@ export default function DetailsPage () {
                     <h1 className='text-white text-3xl font-bold mt-6'>{campaign.name}</h1>
                 </div>
 
-                <div className='flex flex-col lg:flex-row justify-between w-full px-10 lg:px-30 xl:px-40 mt-16'>
+                <div className='flex flex-col lg:flex-row justify-between w-full lg:px-30 xl:px-40 mt-10 md:mt-16'>
                     <div className='flex flex-col lg:mr-5'>
                         <div className='flex flex-col'>
                             <h1 className='text-white font-bold mb-2 text-lg'>CREATOR</h1>
                             <div className='flex flex-row'>
-                                <div className='bg-gray-300 p-1 rounded-full mr-2'>
+                                <div className='bg-gray-300 hidden md:block p-1 rounded-full mr-2'>
                                     <Image 
                                     src='/ethereum.svg'
                                     alt='eth'
@@ -304,7 +304,7 @@ export default function DetailsPage () {
                                     height={20}
                                     />
                                 </div>
-                                <div className='text-[#747474] text-sm'>{campaign.organization}</div>
+                                <div className='text-[#747474] text-sm flex flex-wrap'>{campaign.organization}</div>
                             </div>
                         </div>
 
@@ -318,38 +318,40 @@ export default function DetailsPage () {
                         <div className='flex flex-col mt-10'>
                             <div className='text-white font-bold mb-4 text-lg'>DONORS</div>
                         </div>
-                        <div className='flex flex-col text-white w-full lg:w-[45vw] bg-[#0E0E0E] pt-6 pb-4 px-5 rounded-2xl font-bold'>
-                            <div className='flex flex-row w-full justify-between pb-4 mb-4 border-b-[1px] border-[#747474] border-opacity-100'>
-                                <div className='w-[20%] text-left'>S/N</div>
-                                <div className='w-[80%] text-left'>Donor Address</div>
-                                <div className='w-[80%] text-left'>Tx Hash</div>
-                                <div className='w-[30%] text-left'>Amount</div>
-                            </div>
-
-                            {numberOfDonors === 0 ? (
-                                <div className="text-[#747474] text-center py-4">
-                                    No donors have donated to this campaign yet
+                        <div className="overflow-x-auto">
+                            <div className='flex flex-col text-white min-w-[500px]  md:min-w-[460px] lg:w-[45vw] bg-[#0E0E0E] pt-6 px-5 rounded-xl font-bold'>
+                                <div className='flex flex-row justify-between pb-4 bg-[#1E1E1E] rounded-t-xl px-5 -mt-6 -mx-5'>
+                                    <div className='w-[20%] text-left pt-6'>S/N</div>
+                                    <div className='w-[80%] text-left pt-6'>Donor</div>
+                                    <div className='w-[80%] text-left pt-6'>Tx Hash</div>
+                                    <div className='w-[30%] text-left pt-6'>Amount</div>
                                 </div>
-                            ) : (
-                                donationEvents.map((event, index) => {
-                                    const { donor, amount } = event.args;
-                                    const formattedAmount = ethers.formatEther(amount);
-                                    
-                                    return (
-                                        <div key={event.transactionHash + index} className="flex flex-row w-full justify-between mb-3 text-[#747474]">
-                                            <div className='w-[20%] text-left'>{index + 1}</div>
-                                            <div className='w-[80%] text-left'>{truncateAddress(donor)}</div>
-                                            <div className='w-[80%] text-left font-medium text-blue-500 cursor-pointer underline underline-offset-2'>
-                                                <Link href={`https://sepolia.etherscan.io/tx/${event.transactionHash}`}>
-                                                    {truncateAddress(event.transactionHash)}
-                                                </Link>
+
+                                {numberOfDonors === 0 ? (
+                                    <div className="text-[#747474] text-center py-4">
+                                        No donors have donated to this campaign yet
+                                    </div>
+                                ) : (
+                                    donationEvents.map((event, index) => {
+                                        const { donor, amount } = event.args;
+                                        const formattedAmount = ethers.formatEther(amount);
+                                        
+                                        return (
+                                            <div key={event.transactionHash + index} className="flex flex-row w-full justify-between py-4 last-of-type:border-b-0 border-b border-[#1E1E1E] text-[#747474]">
+                                                <div className='w-[20%] text-left'>{index + 1}</div>
+                                                <div className='w-[80%] text-left'>{truncateAddress(donor)}</div>
+                                                <div className='w-[80%] text-left font-medium text-blue-500 cursor-pointer underline underline-offset-2'>
+                                                    <Link href={`https://sepolia.etherscan.io/tx/${event.transactionHash}`}>
+                                                        {truncateAddress(event.transactionHash)}
+                                                    </Link>
+                                                </div>
+                                                <div className='w-[30%] text-left'>{formattedAmount}</div>
                                             </div>
-                                            <div className='w-[30%] text-left'>{formattedAmount}</div>
-                                        </div>
-                                    );
-                                })
-                            )}
-                        </div>  
+                                        );
+                                    })
+                                )}
+                            </div> 
+                        </div> 
                         </>
                         :
                         <></>

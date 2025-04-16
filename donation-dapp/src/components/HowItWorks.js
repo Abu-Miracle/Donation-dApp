@@ -6,7 +6,7 @@ export default function HowItWorks() {
                 <p className="mt-8 text-[#E9ECEB] text-[20px] font-thin">Effortlessly connect your wallet, select a verified campaign, donate securely  <br /> <span>through our transparent blockchain platform</span></p>
             </div>
 
-            <div className="gap-16 mt-26 grid grid-cols-1 xl:grid-cols-3">
+            <div className="gap-16 mt-26 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                 <div className="pt-16 pb-30 px-10 bg-[#0E0E0E] text-white text-start transition-transform duration-300 hover:scale-105">
                     <img 
                     src="/Wallet.svg" 

@@ -108,7 +108,6 @@ export default function AdminPage() {
                 className="text-[var(--light-gray)] w-full border-none outline-none text-[16px]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-
                  />
                 <button 
                     type="submit" 
