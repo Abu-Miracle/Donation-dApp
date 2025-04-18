@@ -258,9 +258,9 @@ export default function DetailsPage () {
                 <div className='flex flex-col'>
                     <div className='flex flex-row gap-10'> 
                         <div>
-                            {campaign.imageUrl ? 
-                            <img src={campaign.imageUrl} className='object-cover rounded-xl w-[65vw] h-[400px]' /> : 
-                            <div className='bg-slate-500 w-[65vw] h-[400px] rounded-xl'></div>
+                            {campaign.imageUrl 
+                            ? <img src={campaign.imageUrl} className='object-cover rounded-xl w-[65vw] h-[400px]' /> 
+                            : <div className='bg-slate-500 w-[65vw] h-[400px] rounded-xl'></div>
                             }
                         </div>
                         
@@ -371,29 +371,33 @@ export default function DetailsPage () {
                         {isAdmin && (
                             <div className='flex flex-col mt-10'>
                                 <h1 className='text-white font-bold mb-4 text-lg'>MILESTONE DOCUMENT</h1>
-                                <div className='bg-[var(--dark-gray)] w-[25vw] text border-[1px] px-6 py-3 border-[#747474] text-blue-500 cursor-pointer underline underline-offset-3 font-semibold'>
+                                <div className='bg-[var(--dark-gray)] whitespace-nowrap md:w-[25vw] text border-[1px] px-6 py-3 border-[#747474] text-blue-500 cursor-pointer underline underline-offset-3 font-semibold'>
                                     <Link href={`https://maroon-high-horse-665.mypinata.cloud/ipfs/${campaign.milestoneIPFSHash}`}>View Document</Link>
                                 </div>
 
 
                                 <div className='mt-10'>
                                     <h1 className='text-white font-bold mb-4 text-lg'>RELEASE FUNDS</h1>
-                                    {campaign.fundsReleased ? (
-                                    <div className='bg-black w-[25vw] text border-[1px] px-6 py-3 border-[#747474] text-[#747474] font-medium'>
+                                    {campaign.approved ? (campaign.fundsReleased ? (
+                                    <div className='bg-black md:w-[25vw] whitespace-nowrap text border-[1px] px-6 py-3 border-[#747474] text-[#747474] font-medium'>
                                         Funds Released
                                     </div>
                                     ) : totalSeconds > 0 ? (
-                                    <div className='bg-black w-[25vw] text border-[1px] px-6 py-3 border-[#747474] text-[#747474] font-medium'>
-                                        Funds Cannot be released yet
+                                    <div className='bg-black whitespace-nowrap md:w-[25vw] text border-[1px] px-4 py-3 border-[#747474] text-[#747474] font-medium'>
+                                        Funds cannot be released yet
                                     </div>
                                     ) : (
                                     <button 
                                         onClick={handleReleaseConfirmation}
-                                        className='bg-[var(--sblue)] w-[25vw] px-6 py-3 text-black cursor-pointer font-semibold rounded-lg hover:bg-[var(--bold-blue)]'
+                                        className='bg-[var(--sblue)] md:w-[25vw] whitespace-nowrap px-6 py-3 text-black cursor-pointer font-semibold rounded-lg hover:bg-[var(--bold-blue)]'
                                         disabled={isReleasing}
                                     >
                                         {isReleasing ? "Releasing..." : "Release Funds"}
                                     </button>
+                                    )):(
+                                    <div className='bg-black text border-[1px] px-6 py-3 border-[#747474] text-[#747474] font-medium'>
+                                        Campaign has not been approved
+                                    </div>
                                     )}
                                 </div>
 
@@ -401,14 +405,14 @@ export default function DetailsPage () {
                                     <div className='flex flex-col'>
                                         <button 
                                         onClick={handleApproveConfirmation}
-                                        className='font-bold px-3 py-3 mt-10 bg-[var(--sblue)] text-black rounded-lg w-[25vw] cursor-pointer hover:bg-[var(--bold-blue)]'
+                                        className='font-bold px-3 py-3 mt-10 bg-[var(--sblue)] whitespace-nowrap text-black rounded-lg md:w-[25vw] cursor-pointer hover:bg-[var(--bold-blue)]'
                                         disabled={isApproving}
                                         >
                                         {isApproving ? "Approving..." : "Approve Campaign"}
                                         </button>
                                         <button 
                                         onClick={handleRejectConfirmation}
-                                        className='font-bold px-3 py-3 mt-4 bg-red-500 hover:bg-[#cf3c3e] text-white rounded-lg w-[25vw] cursor-pointer'
+                                        className='font-bold px-3 py-3 mt-4 whitespace-nowrap bg-red-500 hover:bg-[#cf3c3e] text-white rounded-lg md:w-[25vw] cursor-pointer'
                                         disabled={isRejecting} >
                                         {isRejecting ? "Rejecting..." : "Reject Campaign"}
                                         </button>
@@ -530,7 +534,6 @@ export default function DetailsPage () {
                                     id="amount" 
                                     placeholder="Amount in ETH"
                                     value={donationAmount}
-                                    min="0"
                                     onChange={(e) => setDonationAmount(e.target.value)}
                                     className='bg-[#0E0E0E] border-1 border-[#747474] py-3 px-3 text-[#747474] w-full'
                                 />

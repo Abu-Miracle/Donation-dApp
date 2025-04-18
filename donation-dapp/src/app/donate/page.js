@@ -65,7 +65,7 @@ export default function Donate() {
         <div className="min-h-screen bg-black">
             <Navbar />
 
-            <div className="w-[50%] bg-[var(--dark-gray)] justify-between flex flex-row mx-auto mt-8 px-6 py-2 rounded-3xl">
+            <div className="w-[50%] bg-[var(--dark-gray)] min-w-[300px] justify-between flex flex-row mx-auto mt-8 px-6 py-2 rounded-3xl">
                 <input 
                 type="search"
                 name="searchCampaigns" 
@@ -86,15 +86,19 @@ export default function Donate() {
                 </button>
             </div>
 
-            <div className="flex flex-start space-x-6 mt-8 px-10 border-b-2 mx-7 pb-5 border-[#1E1E1E]">
+            <div className="flex flex-start space-x-6 mt-8 px-5 mx:px-10 border-b-2 mx-7 pb-3 md:pb-5 border-[#1E1E1E]">
                 <button
-                    className={selectedTab === "open" ? "bg-white text-black text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                    className={selectedTab === "open" 
+                        ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                        : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
                     onClick={() => setSelectedTab("open")}
                 >
                     Open Campaigns
                 </button>
                 <button
-                    className={selectedTab === "closed" ? "bg-white text-black text-sm font-[600] px-4 py-2  rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                    className={selectedTab === "closed" 
+                        ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                        : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
                     onClick={() => setSelectedTab("closed")}
                 >
                     Closed Campaigns
@@ -164,7 +168,7 @@ export default function Donate() {
 
                         <div className='flex flex-row justify-between items-center xl:flex-row xl:justify-between'>
                             <div className='flex flex-row'>
-                                <div className='bg-gray-300 p-1 rounded-full mr-2 whitespace-nowrap'>
+                                <div className='bg-gray-300 p-1 rounded-full mr-2 whitespace-nowrap hidden md:block'>
                                     <Image 
                                     src='/ethereum.svg'
                                     alt='eth'

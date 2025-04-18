@@ -99,7 +99,7 @@ export default function AdminPage() {
 
             <h1 className="text-3xl text-center mt-16 font-bold text-white">Admin Dashboard</h1>
 
-            <div className="w-[50%] bg-[var(--dark-gray)] justify-between flex flex-row mx-auto mt-8 px-6 py-2 rounded-3xl">
+            <div className="w-[50%] bg-[var(--dark-gray)] justify-between min-w-[300px] flex flex-row mx-auto mt-8 px-6 py-2 rounded-3xl">
                 <input 
                 type="search"
                 name="searchCampaigns" 
@@ -119,37 +119,49 @@ export default function AdminPage() {
                 </button>
             </div>
 
-            <div className="flex flex-start space-x-6 mt-8 px-10 border-b-2 pb-5 mx-7 border-[#1E1E1E] ">
-                <button
-                    className={selectedTab === "open" ? "bg-white text-black text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                    onClick={() => setSelectedTab("open")}
-                >
-                    Open Campaigns
-                </button>
-                <button
-                    className={selectedTab === "closed" ? "bg-white text-black text-sm font-[600] px-4 py-2  rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                    onClick={() => setSelectedTab("closed")}
-                >
-                    Closed Campaigns
-                </button>
-                <button
-                    className={selectedTab === "release" ? "bg-white text-black text-sm font-[600] px-4 py-2  rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                    onClick={() => setSelectedTab("release")}
-                >
-                    Due for fund release 
-                </button>
-                <button
-                    className={selectedTab === "rejected" ? "bg-white text-black text-sm font-[600] px-4 py-2  rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                    onClick={() => setSelectedTab("rejected")}
-                >
-                    Rejected Campaigns
-                </button>
-                <button
-                    className={selectedTab === "funded" ? "bg-white text-black text-sm font-[600] px-4 py-2  rounded-xl cursor-pointer" : "bg-[#1E1E1E] font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                    onClick={() => setSelectedTab("funded")}
-                >
-                    Funded Campaigns
-                </button>
+            <div className="overflow-x-auto">
+                <div className="flex flex-start min-w-[960px] space-x-6 mt-8 px-14 border-b-2 pb-3 md:pb-5 -mx-7 md:mx-7 border-[#1E1E1E] ">
+                    <button
+                        className={selectedTab === "open" 
+                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                        onClick={() => setSelectedTab("open")}
+                    >
+                        Open Campaigns
+                    </button>
+                    <button
+                        className={selectedTab === "closed" 
+                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                        onClick={() => setSelectedTab("closed")}
+                    >
+                        Closed Campaigns
+                    </button>
+                    <button
+                        className={selectedTab === "release" 
+                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                        onClick={() => setSelectedTab("release")}
+                    >
+                        Due for fund release 
+                    </button>
+                    <button
+                        className={selectedTab === "rejected" 
+                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                        onClick={() => setSelectedTab("rejected")}
+                    >
+                        Rejected Campaigns
+                    </button>
+                    <button
+                        className={selectedTab === "funded" 
+                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                        onClick={() => setSelectedTab("funded")}
+                    >
+                        Funded Campaigns
+                    </button>
+                </div>
             </div>
 
             {/* Display Filtered Campaigns */}
@@ -227,9 +239,9 @@ export default function AdminPage() {
                             }
                         </div>
 
-                        <div className='flex flex-row justify-between items-center xl:flex-row xl:justify-between'>
+                        <div className='flex flex-row justify-between items-center'>
                             <div className='flex flex-row'>
-                                <div className='bg-gray-300 p-1 rounded-full mr-2'>
+                                <div className='bg-gray-300 p-1 rounded-full mr-2 hidden md:block'>
                                     <Image 
                                     src='/ethereum.svg'
                                     alt='eth'
@@ -246,7 +258,7 @@ export default function AdminPage() {
                             </div>
 
                             <Link href={`/donate/${campaign.id}`}>
-                                <button className="text-[var(--sblue)] mt-2 text-[14px] cursor-pointer">See full details</button>
+                                <button className="text-[var(--sblue)] ml-3 md:mx-0 mt-2 text-[14px] cursor-pointer">See full details</button>
                             </Link>
                         </div>
                     </div>
