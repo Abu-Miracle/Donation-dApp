@@ -160,7 +160,6 @@ export default function NewCampaign() {
                                 placeholder="Amount in ETH"
                                 value={formData.targetAmount}
                                 onChange={handleChange}
-                                min="0"
                                 required
                                 className="w-full px-6 py-3 border text-white text-[16px] font-light border-[#747474] rounded"
                             />
