@@ -266,7 +266,7 @@ export default function DetailsPage () {
                         
                         <div className='flex flex-col justify-between text-center'>
                             <div className='w-28 aspect-square'>
-                                {campaign.fundsReleased ? 
+                                {(campaign.fundsReleased) || (daysLeft(campaign.targetDate) < 0) ? 
                                 <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>--</div>
                                 : 
                                 <div className='bg-[#0E0E0E] text-white mb-0 h-[60%] flex justify-center items-center px-4 py-4 font-bold text-2xl rounded-t-xl'>{daysLeft(campaign.targetDate)}</div>
@@ -395,7 +395,7 @@ export default function DetailsPage () {
                                         {isReleasing ? "Releasing..." : "Release Funds"}
                                     </button>
                                     )):(
-                                    <div className='bg-black text border-[1px] px-6 py-3 border-[#747474] text-[#747474] font-medium'>
+                                    <div className='bg-black text mb-10 border-[1px] px-6 py-3 border-[#747474] text-[#747474] font-medium'>
                                         Campaign has not been approved
                                     </div>
                                     )}
@@ -403,13 +403,16 @@ export default function DetailsPage () {
 
                                 {(!campaign.approved && campaign.status === 0) && (
                                     <div className='flex flex-col'>
-                                        <button 
-                                        onClick={handleApproveConfirmation}
-                                        className='font-bold px-3 py-3 mt-10 bg-[var(--sblue)] whitespace-nowrap text-black rounded-lg md:w-[25vw] cursor-pointer hover:bg-[var(--bold-blue)]'
-                                        disabled={isApproving}
-                                        >
-                                        {isApproving ? "Approving..." : "Approve Campaign"}
-                                        </button>
+                                        {(daysLeft(campaign.targetDate) < 0) 
+                                            ? <> </>
+                                            : <button 
+                                            onClick={handleApproveConfirmation}
+                                            className='font-bold px-3 py-3 bg-[var(--sblue)] whitespace-nowrap text-black rounded-lg md:w-[25vw] cursor-pointer hover:bg-[var(--bold-blue)]'
+                                            disabled={isApproving}
+                                            >
+                                            {isApproving ? "Approving..." : "Approve Campaign"}
+                                            </button>
+                                        }
                                         <button 
                                         onClick={handleRejectConfirmation}
                                         className='font-bold px-3 py-3 mt-4 whitespace-nowrap bg-red-500 hover:bg-[#cf3c3e] text-white rounded-lg md:w-[25vw] cursor-pointer'

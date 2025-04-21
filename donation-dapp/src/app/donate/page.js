@@ -161,8 +161,14 @@ export default function Donate() {
                             </div>
 
                             <div className='flex flex-col items-center'>
-                                <p className="text-white font-bold text-[18px]">{daysLeft(campaign.targetDate)}</p>
-                                <p className="text-[#747474] text-[14px]">days left</p>
+                                {(daysLeft(campaign.targetDate) >= 0) ? 
+                                    <>
+                                        <p className="text-white font-bold text-[18px]">{daysLeft(campaign.targetDate)}</p>
+                                        <p className="text-[#747474] text-[14px]">days left</p>
+                                    </>
+                                    :
+                                    <p className="text-white font-normal text-[14px]">Date Passed</p>
+                                }
                             </div>
                         </div>
 

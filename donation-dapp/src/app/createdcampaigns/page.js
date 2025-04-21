@@ -9,10 +9,14 @@ import { ethers } from 'ethers';
 import Image from 'next/image';
 import Link from 'next/link';
 import CampaignOptions from "../../components/CampaignOptions";
+import EditCampaignModal from '../../components/EditCampaignModal';
 
 export default function CreatedCampaigns() {
     const [campaigns, setCampaigns] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+
+    const [editingCampaign, setEditingCampaign] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const { address, isConnected } = useAccount();
 
@@ -30,6 +34,11 @@ export default function CreatedCampaigns() {
 
     console.log(campaign);
 
+    const handleEditClick = (campaign) => {
+        setEditingCampaign(campaign);
+        setShowEditModal(true);
+    };
+
     const filteredCampaigns = campaigns.filter((campaign) => {
         // Check if the campaign was created by the connected address.
         const isCreatedByUser =
@@ -44,12 +53,12 @@ export default function CreatedCampaigns() {
         return `${address.substring(0, 10)}...${address.substring(address.length - 4)}`;
     }
 
-    function truncateText(text, maxLength = 40) {
+    function truncateText(text, maxLength = 45) {
         if (!text) return '';
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
 
-    function truncateTitle(text, maxLength = 30) {
+    function truncateTitle(text, maxLength = 27) {
         if (!text) return '';
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
@@ -116,11 +125,29 @@ export default function CreatedCampaigns() {
                 {filteredCampaigns.map((campaign) =>   (
                 <div key={`${campaign.name}-${campaign.targetDate}`} className="bg-[var(--dark-gray)] rounded-xl ">
                     {/* Example Card */}
-                    <div className=''>
+                    <div className='relative'>
                         {campaign.imageUrl ?
                         <img src={campaign.imageUrl} className="object-cover rounded-t-xl w-full h-52 mb-0" /> :
-                        <div className="bg-slate-500 w-full rounded-t-xl h-52 mb-0"></div>
+                        <div className="bg-gray-600 w-full rounded-t-xl h-52 mb-0"></div>
                         }
+
+                        {(campaign.fundsReleased) ? (
+                            <div className="absolute top-2 left-2 font-bold text-green-400 p-1 ">
+                                Funded
+                            </div>
+                        ) : (campaign.status === 0) ? (
+                            <div className="absolute top-0 left-0 w-full rounded-t-xl h-52 p-3 bg-black/50 font-bold text-amber-300">
+                                Pending Approval
+                            </div>
+                        ) : (campaign.status === 1) ? (
+                            <div className="absolute top-2 left-2 font-bold text-[var(--sblue)] p-1 ">
+                                Open
+                            </div>
+                        ) : (
+                            <div className="absolute top-0 left-0 w-full rounded-t-xl h-52 p-3 bg-black/50 font-bold text-red-500">
+                                Rejected
+                            </div>
+                        )}
                     </div>
 
                     <div className='px-6 py-4'>
@@ -129,12 +156,17 @@ export default function CreatedCampaigns() {
                                 <h2 className="text-white text-xl font-bold">{truncateTitle(campaign.name)}</h2>
                                 <p className="text-[#747474] text-[14px]">{truncateText(campaign.description)}</p>
                             </div>
-                            <CampaignOptions
-                                isApproved={campaign.approved}
-                                onEdit={() => onEdit(campaign)}
-                                onDelete={() => onDelete(campaign)}
-                                onViewDetails={() => onViewDetails(campaign)} 
-                            />
+                            {(campaign.status === 0) ? (
+                                <CampaignOptions
+                                    isApproved={campaign.approved}
+                                    onEdit={() => handleEditClick(campaign)}
+                                    onDelete={() => onDelete(campaign)}
+                                    onViewDetails={() => onViewDetails(campaign)} 
+                                />
+                            ) : (
+                                <></>
+                            )} 
+                            
                         </div>
 
                         <div className='mb-6 flex flex-row justify-between items-center'>
@@ -144,19 +176,26 @@ export default function CreatedCampaigns() {
                             </div>
 
                             <div className='flex flex-col items-center'>
-                                <p className="text-white font-bold text-[18px]">{daysLeft(campaign.targetDate)}</p>
-                                <p className="text-[#747474] text-[14px]">days left</p>
+                                {(daysLeft(campaign.targetDate) >= 0) ? 
+                                    <>
+                                        <p className="text-white font-bold text-[18px]">{daysLeft(campaign.targetDate)}</p>
+                                        <p className="text-[#747474] text-[14px]">days left</p>
+                                    </>
+                                    :
+                                    <p className="text-white font-normal text-[14px]">Date Passed</p>
+                                }
                             </div>
                         </div>
 
-                        <div className='flex flex-row items-center justify-between'>
-                             <div className='flex flex-row items-center'>
-                                <div className='bg-gray-300 p-1 rounded-full mr-2'>
+                        <div className='flex flex-row justify-between items-center xl:flex-row xl:justify-between'>
+                            <div className='flex flex-row'>
+                                <div className='bg-gray-300 p-1 rounded-full mr-2 whitespace-nowrap hidden md:block'>
                                     <Image 
                                     src='/ethereum.svg'
                                     alt='eth'
                                     width={12}
                                     height={12}
+                                    className='w-4 h-4'
                                     />
                                 </div>
                                 <div>
@@ -166,23 +205,30 @@ export default function CreatedCampaigns() {
                                 </div>
                             </div>
 
-                            {campaign.approved ? 
+                            
                             <Link href={`/donate/${campaign.id}`}>
                                 <button className="text-[var(--sblue)] mt-2 text-[14px] cursor-pointer">See full details</button>
-                            </Link> :
-                            <Image
-                                src="/locked.svg"
-                                alt="Locked"
-                                width={20}
-                                height={20}
-                                className='text-white'
-                            /> 
-                            }
+                            </Link>
                         </div>
                     </div>
                 </div>
                 ))}
             </div>
+
+            {showEditModal && editingCampaign && (
+            <EditCampaignModal 
+                campaign={editingCampaign}
+                onClose={() => {
+                setShowEditModal(false);
+                setEditingCampaign(null);
+                }}
+                onUpdate={(updatedCampaign) => {
+                setCampaigns(campaigns.map(c => 
+                    c.id === updatedCampaign.id ? updatedCampaign : c
+                ));
+                }}
+            />
+            )}
 
         </div>
     );

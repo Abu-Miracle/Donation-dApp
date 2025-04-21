@@ -22,6 +22,10 @@ html, body {
   -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
+#editModal::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
 body::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }

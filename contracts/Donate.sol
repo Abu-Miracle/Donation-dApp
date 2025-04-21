@@ -62,7 +62,7 @@ contract Donation {
     event CampaignApproved(uint campaignId);
     event CampaignRejected(uint campaignId, string reason);
     event CampaignDeleted(uint campaignId);
-    event DonationReceived(uint campaignId, address donor, uint amount);
+    event DonationReceived(uint indexed campaignId, address indexed donor, uint amount);
     event MilestoneAchieved(uint campaignId);
     event FundsReleased(uint campaignId, uint amount);
     event RefundIssued(uint campaignId, address donor, uint amount);
