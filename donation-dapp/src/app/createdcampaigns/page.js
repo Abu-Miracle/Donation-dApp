@@ -3,7 +3,7 @@
 import Navbar from '../../components/Navbar';
 import "../globals.css";
 import { useState, useEffect } from 'react';
-import { useReadContract, useAccount } from 'wagmi';
+import { useReadContract, useWriteContract, useAccount } from 'wagmi';
 import abi from "../abi/abi.json";
 import { ethers } from 'ethers';
 import Image from 'next/image';
@@ -18,6 +18,9 @@ export default function CreatedCampaigns() {
     const [editingCampaign, setEditingCampaign] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
 
+    const [deletingCampaign, setDeletingCampaign] = useState(null);
+    const [showDeleteModal,  setShowDeleteModal]  = useState(false);
+
     const { address, isConnected } = useAccount();
 
     const { data: campaign, isLoading, isError } = useReadContract({
@@ -25,7 +28,9 @@ export default function CreatedCampaigns() {
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
         functionName: 'getAllCampaigns',
     });
-    
+
+    const { writeContractAsync } = useWriteContract()
+
     useEffect(() => {
         if (campaign) {
             setCampaigns(campaign);
@@ -38,6 +43,36 @@ export default function CreatedCampaigns() {
         setEditingCampaign(campaign);
         setShowEditModal(true);
     };
+
+    function handleDeleteClick(campaign) {
+        setDeletingCampaign(campaign);
+        setShowDeleteModal(true);
+    }
+
+    // When user confirms deletion
+    async function confirmDelete() {
+        try {
+        await writeContractAsync({
+            abi,
+            address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+            functionName: 'deleteCampaign',
+            args: [deletingCampaign.id],
+        })
+        // remove it locally so the UI updates immediately:
+        setCampaigns(cs => cs.filter(c => c.id !== deletingCampaign.id))
+        } catch (e) {
+        console.error("Failed to delete:", e)
+        alert("Deletion failed")
+        } finally {
+        setShowDeleteModal(false)
+        setDeletingCampaign(null)
+        }
+    }
+
+    function cancelDelete() {
+        setShowDeleteModal(false)
+        setDeletingCampaign(null)
+    }
 
     const filteredCampaigns = campaigns.filter((campaign) => {
         // Check if the campaign was created by the connected address.
@@ -99,8 +134,8 @@ export default function CreatedCampaigns() {
                 </button>
             </div>
 
-            <div className="flex flex-start mt-8 px-10 border-b-[2px] mx-7 pb-3 border-[#1E1E1E]">
-                <button className='text-white text-[16px] font-bold'>
+            <div className="flex flex-start mt-8 px-4 md:px-10 border-b-[2px] mx-7 pb-2 md:pb-3 border-[#1E1E1E]">
+                <button className='text-white text-sm md:text-[16px] font-bold'>
                     Created Campaigns
                 </button>
             </div>
@@ -160,13 +195,12 @@ export default function CreatedCampaigns() {
                                 <CampaignOptions
                                     isApproved={campaign.approved}
                                     onEdit={() => handleEditClick(campaign)}
-                                    onDelete={() => onDelete(campaign)}
+                                    onDelete={() => handleDeleteClick(campaign)}
                                     onViewDetails={() => onViewDetails(campaign)} 
                                 />
                             ) : (
                                 <></>
-                            )} 
-                            
+                            )}  
                         </div>
 
                         <div className='mb-6 flex flex-row justify-between items-center'>
@@ -207,7 +241,7 @@ export default function CreatedCampaigns() {
 
                             
                             <Link href={`/donate/${campaign.id}`}>
-                                <button className="text-[var(--sblue)] mt-2 text-[14px] cursor-pointer">See full details</button>
+                                <button className="text-[var(--sblue)] ml-3 md:mx-0 mt-2 text-[14px] whitespace-nowrap flex cursor-pointer">See <span className='hidden md:block mx-1'>full</span> details</button>
                             </Link>
                         </div>
                     </div>
@@ -228,6 +262,33 @@ export default function CreatedCampaigns() {
                 ));
                 }}
             />
+            )}
+
+            {showDeleteModal && deletingCampaign && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-[var(--dark-gray)] p-6 rounded-lg space-y-4 w-80">
+                    <h2 className="text-white text-lg font-bold">Confirm Deletion</h2>
+                    <p className="text-[#ccc]">
+                        Are you sure you want to delete “
+                        <span className="font-semibold text-white">{deletingCampaign.name}</span>”?
+                    </p>
+                    <div className="flex justify-end space-x-4">
+                        <button
+                        onClick={cancelDelete}
+                        className="px-6 py-2 bg-[#555] hover:bg-[#696969] text-white cursor-pointer  rounded-lg font-medium"
+                        >
+                        Cancel
+                        </button>
+                        
+                        <button
+                        onClick={confirmDelete}
+                        className="px-6 py-2 bg-red-600 text-white cursor-pointer rounded-lg hover:bg-red-500 font-[550]"
+                        >
+                        Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
             )}
 
         </div>

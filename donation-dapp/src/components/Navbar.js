@@ -84,7 +84,7 @@ export default function Navbar() {
               <Link
                 key={index}
                 href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`}
-                className="text-xl font-semibold text-white hover:text-[var(--sblue)]"
+                className="text-sm font-semibold text-white hover:text-[var(--sblue)]"
                 onClick={() => setMenuOpen(false)}
               >
                 {item}
@@ -93,7 +93,7 @@ export default function Navbar() {
             {isAdmin && (
               <Link
                 href="/admin"
-                className="text-xl font-semibold text-white hover:text-[var(--sblue)]"
+                className="text-sm font-semibold text-white hover:text-[var(--sblue)]"
                 onClick={() => setMenuOpen(false)}
               >
                 Admin

@@ -86,7 +86,7 @@ export default function Donate() {
                 </button>
             </div>
 
-            <div className="flex flex-start space-x-6 mt-8 px-5 mx:px-10 border-b-2 mx-7 pb-3 md:pb-5 border-[#1E1E1E]">
+            <div className="flex justify-center md:justify-start md:flex-start space-x-6 mt-8 px-5 mx:px-10 border-b-2 mx-7 pb-3 md:pb-5 border-[#1E1E1E]">
                 <button
                     className={selectedTab === "open" 
                         ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
@@ -192,7 +192,7 @@ export default function Donate() {
 
                             
                             <Link href={`/donate/${campaign.id}`}>
-                                <button className="text-[var(--sblue)] mt-2 text-[14px] cursor-pointer">See full details</button>
+                                <button className="text-[var(--sblue)] ml-3 md:mx-0 mt-2 text-[14px] whitespace-nowrap flex cursor-pointer">See <span className='hidden md:block mx-1'>full</span> details</button>
                             </Link>
                         </div>
                     </div>

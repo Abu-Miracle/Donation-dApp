@@ -97,6 +97,7 @@ export default function DetailsPage () {
           try {
             // Create a provider (using window.ethereum or your configured provider)
             const provider = new ethers.BrowserProvider(window.ethereum);
+            // INCASE OF BASE SEPOLIA
             //const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL);
             // Create the contract instance
             const contract = new ethers.Contract(

@@ -96,8 +96,7 @@ export default function EditCampaignModal({ campaign, onClose, onUpdate }) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div id='editModal' className="bg-[#0E0E0E] pt-4 px-4 rounded-xl w-[80vw] md:w-[60vw] max-w-2xl mx-4 max-h-[70vh] md:max-h-[80vh] overflow-y-auto">
         <h2 className="text-2xl text-white font-bold mb-6 sticky py-4 -top-4 -mx-8 rounded-t-xl px-12 bg-[#0E0E0E] z-10 border-b border-[#1E1E1E]">Edit Campaign</h2>
-        
-        {/* Reuse your campaign form with existing values */}
+      
         <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
             <div className='flex-1 overflow-y-auto px-4'>
                 <div className="mb-10 md:mb-14">
@@ -111,8 +110,6 @@ export default function EditCampaignModal({ campaign, onClose, onUpdate }) {
                     />
                 </div>
 
-                {/* Replicate all other form fields from your creation form */}
-                {/* Ensure all fields use formData state and handleChange */}
                 <div className="mb-10 md:mb-14">
                     <label htmlFor="description" className="block mb-2 text-[16px] md:text-lg text-white font-bold">Description/Story</label>
                     <textarea
@@ -173,7 +170,7 @@ export default function EditCampaignModal({ campaign, onClose, onUpdate }) {
                         />
                         
                         <div className="absolute inset-0 px-6 py-3 flex items-center pointer-events-none">
-                            <span className={`text-[18px] font-light  ${imageFileName ? 'text-white' : 'text-[#747474]'}`}>
+                            <span className={`text-sm md:text-[16px] font-light  ${imageFileName ? 'text-white' : 'text-[#747474]'}`}>
                                 {imageFileName || 
                                 <p className='items-center flex'> <span className='text-4xl mr-2 block'>+</span> <span className='block'>Upload Campaign Image</span> 
                                 </p>}
@@ -183,7 +180,7 @@ export default function EditCampaignModal({ campaign, onClose, onUpdate }) {
                         {imageFileName && 
                             <button 
                                 type="button"
-                                className="absolute right-7 top-[50%] font-bold -translate-y-1/2 text-white "
+                                className="absolute right-7 cursor-pointer top-[50%] font-bold -translate-y-1/2 text-white "
                                 onClick={() => {
                                 setImageFileName('');
                                 setFormData(prev => ({ ...prev, image: null }));
@@ -208,7 +205,7 @@ export default function EditCampaignModal({ campaign, onClose, onUpdate }) {
                             className="w-full px-4 md:px-6 py-4 md:py-6 border text-transparent text-sm md:text-[16px] font-light border-[#747474] rounded cursor-pointer"
                         />
                         <div className="absolute inset-0 px-6 py-3 flex items-center pointer-events-none">
-                            <span className={`text-[18px] font-light mt-9 ${fileName ? 'text-white' : 'text-[#747474]'}`}>
+                            <span className={`text-sm md:text-[16px] font-light mt-9 ${fileName ? 'text-white' : 'text-[#747474]'}`}>
                                 {fileName || 
                                 <p className='items-center flex cursor-pointer'> <span className='cursor-pointer text-4xl mr-2 block'>+</span> <span className='block'>Upload a PDF file with evidence of milestone achievement concerning the campaign</span> 
                                 </p>}
@@ -218,7 +215,7 @@ export default function EditCampaignModal({ campaign, onClose, onUpdate }) {
                         {fileName && 
                             <button 
                                 type="button"
-                                className="absolute right-7 top-[65%] font-bold -translate-y-1/2 text-white"
+                                className="absolute right-7 cursor-pointer top-[65%] font-bold -translate-y-1/2 text-white"
                                 onClick={() => {
                                 setFileName('');
                                 setFormData(prev => ({ ...prev, document: null }));
@@ -237,7 +234,7 @@ export default function EditCampaignModal({ campaign, onClose, onUpdate }) {
                     <button
                     type="button"
                     onClick={onClose}
-                    className="px-6 py-2 bg-gray-500 text-white rounded-xl font-semibold"
+                    className="px-6 py-2 bg-[#555] hover:bg-[#696969] text-white cursor-pointer  rounded-lg font-medium"
                     >
                     Cancel
                     </button>
@@ -245,7 +242,7 @@ export default function EditCampaignModal({ campaign, onClose, onUpdate }) {
                     <button
                     type="submit"
                     disabled={uploading}
-                    className="px-6 py-2 bg-[var(--sblue)] text-black rounded-xl font-semibold disabled:opacity-50"
+                    className="px-6 py-2 bg-[var(--sblue)] text-black cursor-pointer rounded-lg hover:bg-[var(--bold-blue)] font-[550] disabled:opacity-50"
                     >
                     {uploading ? 'Updating...' : 'Save Changes'}
                     </button>

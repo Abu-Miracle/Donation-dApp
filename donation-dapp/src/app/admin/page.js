@@ -1,6 +1,6 @@
 'use client';
 
-import { useAccount } from 'wagmi';
+import { useAccount, useReadContracts } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useReadContract } from 'wagmi';
@@ -36,6 +36,25 @@ export default function AdminPage() {
 
     console.log(campaign);
 
+    const { data: campaignCount } = useReadContract({
+        abi,
+        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+        functionName: 'campaignCount',
+    })
+    
+    const ids = Array.from({ length: Number(campaignCount) }, (_, i) => i + 1)
+
+    const { data: allCampaigns, isLoading: loadingCampaigns } = useReadContracts({
+        contracts: ids.map((id) => ({
+            abi,
+            address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+            functionName: 'campaigns',
+            args: [id],
+        }))
+    })
+
+    console.log("All Campaigns", allCampaigns);
+
     useEffect(() => {
         if (campaign) {
             setCampaigns(campaign);
@@ -47,23 +66,25 @@ export default function AdminPage() {
 
     const filteredCampaigns = campaigns.filter((campaign) => {
         const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase());
+        if (selectedTab === "deleted") {
+            return campaign.isDeleted && matchesSearch;
+        }
         if (selectedTab === "release") {
           return (
             campaign.approved === true &&
             campaign.fundsReleased === false &&
             Number(campaign.targetDate) <= currentTimestamp &&
-            campaign.isDeleted === false &&
             matchesSearch
           );
-        } else if (selectedTab === "rejected") {
-            return campaign.status === 2 && !campaign.isDeleted && matchesSearch;
-        } else if (selectedTab === "open") {
-            return campaign.approved === true && campaign.fundsReleased === false && !campaign.isDeleted && matchesSearch;
-        } else if (selectedTab === "closed") {
-            return (campaign.approved === false && campaign.status === 0) && !campaign.isDeleted && matchesSearch;
-        } else if (selectedTab === "funded") {
-            return campaign.fundsReleased == true && matchesSearch;
-        }
+        } if (selectedTab === "rejected") {
+            return campaign.status === 2 && matchesSearch;
+        } if (selectedTab === "open") {
+            return campaign.approved === true && campaign.fundsReleased === false && matchesSearch;
+        } if (selectedTab === "closed") {
+            return (campaign.approved === false && campaign.status === 0) && matchesSearch;
+        } if (selectedTab === "funded") {
+            return campaign.fundsReleased === true && matchesSearch;
+        }  
         return false;
     });
 
@@ -119,53 +140,63 @@ export default function AdminPage() {
                 </button>
             </div>
 
-            <div className="overflow-x-auto">
-                <div className="flex flex-start min-w-[960px] space-x-6 mt-8 px-14 border-b-2 pb-3 md:pb-5 -mx-7 md:mx-7 border-[#1E1E1E] ">
-                    <button
-                        className={selectedTab === "open" 
-                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
-                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                        onClick={() => setSelectedTab("open")}
-                    >
-                        Open Campaigns
-                    </button>
-                    <button
-                        className={selectedTab === "closed" 
-                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
-                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                        onClick={() => setSelectedTab("closed")}
-                    >
-                        Closed Campaigns
-                    </button>
-                    <button
-                        className={selectedTab === "release" 
-                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
-                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                        onClick={() => setSelectedTab("release")}
-                    >
-                        Due for fund release 
-                    </button>
-                    <button
-                        className={selectedTab === "rejected" 
-                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
-                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                        onClick={() => setSelectedTab("rejected")}
-                    >
-                        Rejected Campaigns
-                    </button>
-                    <button
-                        className={selectedTab === "funded" 
-                            ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
-                            : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
-                        onClick={() => setSelectedTab("funded")}
-                    >
-                        Funded Campaigns
-                    </button>
+            <div className='relative'>
+                <div id='editModal' className="overflow-x-auto">
+                    <div className="flex flex-start min-w-[960px] space-x-6 mt-8 px-14 pb-3 md:pb-7 -mx-7 md:mx-7">
+                        <button
+                            className={selectedTab === "open" 
+                                ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                                : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                            onClick={() => setSelectedTab("open")}
+                        >
+                            Open Campaigns
+                        </button>
+                        <button
+                            className={selectedTab === "closed" 
+                                ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                                : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                            onClick={() => setSelectedTab("closed")}
+                        >
+                            Closed Campaigns
+                        </button>
+                        <button
+                            className={selectedTab === "release" 
+                                ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                                : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                            onClick={() => setSelectedTab("release")}
+                        >
+                            Due for fund release 
+                        </button>
+                        <button
+                            className={selectedTab === "rejected" 
+                                ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                                : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                            onClick={() => setSelectedTab("rejected")}
+                        >
+                            Rejected Campaigns
+                        </button>
+                        <button
+                            className={selectedTab === "funded" 
+                                ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                                : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                            onClick={() => setSelectedTab("funded")}
+                        >
+                            Funded Campaigns
+                        </button>
+                        <button
+                            className={selectedTab === "deleted" 
+                                ? "bg-white text-black whitespace-nowrap text-sm font-[600] px-4 py-2 rounded-xl cursor-pointer" 
+                                : "bg-[#1E1E1E] whitespace-nowrap font-[600] md:font-medium hover:bg-[#585858] text-white px-4 py-2 rounded-xl text-sm cursor-pointer"}
+                            onClick={() => setSelectedTab("deleted")}
+                        >
+                            Deleted Campaigns
+                        </button>
+                    </div>
                 </div>
+                <div className="absolute bottom-0 left-0 right-0 border-b border-[#1E1E1E]"></div>
             </div>
 
             {/* Display Filtered Campaigns */}
-
             <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-10 mt-8 px-10 pb-10">
                 {!isConnected && (<div className='flex flex-col'>
                     <p className='text-white text-center absolute top-2/3 left-1/2 font-semibold transform -translate-x-1/2 -translate-y-1/2 mb-4'>Please connect an Ethereum wallet to view campaigns</p>
@@ -264,14 +295,13 @@ export default function AdminPage() {
                             </div>
 
                             <Link href={`/donate/${campaign.id}`}>
-                                <button className="text-[var(--sblue)] ml-3 md:mx-0 mt-2 text-[14px] cursor-pointer">See full details</button>
+                                <button className="text-[var(--sblue)] ml-3 md:mx-0 mt-2 text-[14px] whitespace-nowrap flex cursor-pointer">See <span className='hidden md:block mx-1'>full</span> details</button>
                             </Link>
                         </div>
                     </div>
                 </div>
                 ))}
             </div>
-
         </div>
     );
 }

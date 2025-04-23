@@ -28,7 +28,7 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
           </div>
         ) : (
           <>
-            <p className='flex flex-col mb-4'>
+            <div className='flex flex-col mb-4'>
             <span className="text-white text-xl font-bold">
               {status === "approving" ? "Approval Successful!" : 
               status === "rejecting" ? "Rejection Successful!" : 
@@ -51,7 +51,7 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
                   Campaign: {campaignName}
                 </span>
               )}
-            </p>
+            </div>
             <div className='mb-6'>
               <p className='text-[#747474] text-sm mb-1'>Transaction Hash:</p>
               <Link 
@@ -75,7 +75,7 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
             </button>
           )}
           <button
-            className="bg-[#585858] text-white px-4 py-2 rounded-lg cursor-pointer font-semibold hover:bg-[#6b6b6b] transition-colors"
+            className="bg-[#555] text-white px-4 py-2 rounded-lg cursor-pointer font-medium hover:bg-[#696969] transition-colors"
             onClick={onClose}
           >
             {txHash ? "Close" : "Cancel"}
