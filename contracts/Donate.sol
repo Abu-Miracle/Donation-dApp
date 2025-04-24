@@ -57,15 +57,14 @@ contract Donation {
     }
     
     // Events for logging actions
-    event CampaignCreated(uint campaignId, address organization, uint targetAmount, uint targetDate);
-    event CampaignUpdated(uint campaignId);
-    event CampaignApproved(uint campaignId);
-    event CampaignRejected(uint campaignId, string reason);
-    event CampaignDeleted(uint campaignId);
+    event CampaignCreated(uint indexed campaignId, address indexed organization, uint targetAmount, uint targetDate);
+    event CampaignUpdated(uint indexed campaignId);
+    event CampaignApproved(uint indexed campaignId);
+    event CampaignRejected(uint indexed campaignId, string reason);
+    event CampaignDeleted(uint indexed campaignId);
     event DonationReceived(uint indexed campaignId, address indexed donor, uint amount);
-    event MilestoneAchieved(uint campaignId);
-    event FundsReleased(uint campaignId, uint amount);
-    event RefundIssued(uint campaignId, address donor, uint amount);
+    event FundsReleased(uint indexed campaignId, uint amount);
+   
     
     // 1. Organization creates a new campaign.
     // The organization sets the funding target and the duration fo funding for the campaign.
@@ -78,6 +77,12 @@ contract Donation {
         string memory _milestoneIPFSHash,
         string memory _imageUrl
     ) public returns (uint) {
+        require(_targetDate > block.timestamp, "Target date must be in the future");
+        require(_targetAmount > 0, "Target amount must be > 0");
+        require(bytes(_name).length > 0, "Name is required");
+        require(bytes(_description).length > 0, "Description is required");
+        require(bytes(_milestoneIPFSHash).length > 0, "Milestone hash is required");
+
         campaignCount++;
 
         Campaign storage newCampaign = campaigns[campaignCount];
@@ -114,7 +119,10 @@ contract Donation {
         Campaign storage campaignStorage = campaigns[_campaignId];
         require(campaignStorage.organization == msg.sender, "Cannot update campaign, not authorized");
         require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
+        require(!campaignStorage.isDeleted, "Cannot update a deleted campaign");
         require(campaignStorage.approved == false, "Campaign has been approved");
+        require(_targetDate > block.timestamp, "Target date must be in the future");
+        require(_targetAmount > 0, "Target amount must be > 0");
 
         campaignStorage.name = _name;
         campaignStorage.description = _description;
@@ -159,6 +167,7 @@ contract Donation {
     // funds are initially held in the contract (escrow)
     function donate(uint _campaignId) public payable {
         Campaign storage campaignStorage = campaigns[_campaignId];
+        require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
         require(campaignStorage.approved, "Campaign is not approved");
         require(block.timestamp < campaignStorage.targetDate, "Campaign deadline passed");
         require(msg.value > 0, "Donation must be greater than zero");
@@ -179,7 +188,7 @@ contract Donation {
 
     // 6. Get Donated Canpaigns
     // Returns all the campaigns that a donor donates to
-    function getDoantedCampaigns(address donor) public view returns(CampaignView[] memory donatedCampaigns) {
+    function getDonatedCampaigns(address donor) public view returns(CampaignView[] memory donatedCampaigns) {
         uint[] memory donatedIds = donationTo[donor];
         uint len = donatedIds.length;
         donatedCampaigns = new CampaignView[](len);
@@ -323,15 +332,54 @@ contract Donation {
     // 11. Delete a created campaign
     function deleteCampaign(uint _campaignId) public {
         Campaign storage campaignStorage = campaigns[_campaignId];
-        require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
         require(campaignStorage.organization == msg.sender || admin == msg.sender , "Cannot delete campaign, not authorized");
+        require(_campaignId > 0 && _campaignId <= campaignCount, "Campaign does not exist");
+        require(campaignStorage.approved == false, "Cannot deleted an approved campaign");
 
-        // delete campaigns[_campaignId]; // Hard Deletion 
         campaignStorage.isDeleted = true; // Soft Deletion
         emit CampaignDeleted(_campaignId);
     }
 
-    // 12. Check Amount
+    // 12. Return deleted campaigns
+    function getDeletedCampaigns() public view returns (CampaignView[] memory) {
+        uint deletedCount = 0;
+        // First, count the deleted campaigns
+        for (uint i = 1; i <= campaignCount; i++) {
+            if (campaigns[i].isDeleted) {
+                deletedCount++;
+            }
+        }
+
+        // Create an array with the size of the deleted campaigns count
+        CampaignView[] memory deletedCampaigns = new CampaignView[](deletedCount);
+        uint j = 0;
+        // Loop again and add the deleted campaigns to the array
+        for (uint i = 1; i <= campaignCount; i++) {
+            if (campaigns[i].isDeleted) {
+                Campaign storage campaignStorage = campaigns[i];
+                deletedCampaigns[j] = CampaignView({
+                    id: campaignStorage.id,
+                    organization: campaignStorage.organization,
+                    name: campaignStorage.name,
+                    description: campaignStorage.description,
+                    targetAmount: campaignStorage.targetAmount,
+                    targetDate: campaignStorage.targetDate,
+                    imageUrl: campaignStorage.imageUrl,
+                    raisedAmount: campaignStorage.raisedAmount,
+                    fundsReleased: campaignStorage.fundsReleased,
+                    milestoneIPFSHash: campaignStorage.milestoneIPFSHash,
+                    approved: campaignStorage.approved,
+                    status: campaignStorage.status,
+                    closedForFunding: campaignStorage.closedForFunding,
+                    isDeleted: campaignStorage.isDeleted
+                });
+                j++;
+            }
+        }
+        return deletedCampaigns;
+    }
+
+    // 13. Check Amount
     // check the amount that is donated to a particular campaign by a donor 
     function checkAmount(uint _campaignId, address donor) public view returns (uint) {
         Campaign storage campaignStorage = campaigns[_campaignId];
