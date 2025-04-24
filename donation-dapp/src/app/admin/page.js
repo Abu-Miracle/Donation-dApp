@@ -36,30 +36,28 @@ export default function AdminPage() {
 
     console.log(campaign);
 
-    const { data: campaignCount } = useReadContract({
+    const { data: deletedCampaign } = useReadContract({
         abi,
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
-        functionName: 'campaignCount',
-    })
-    
-    const ids = Array.from({ length: Number(campaignCount) }, (_, i) => i + 1)
-
-    const { data: allCampaigns, isLoading: loadingCampaigns } = useReadContracts({
-        contracts: ids.map((id) => ({
-            abi,
-            address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
-            functionName: 'campaigns',
-            args: [id],
-        }))
+        functionName: 'getDeletedCampaigns',
     })
 
-    console.log("All Campaigns", allCampaigns);
+    console.log("Deleted Camapigns", deletedCampaign);
 
     useEffect(() => {
-        if (campaign) {
-            setCampaigns(campaign);
-        }
-    }, [campaign]);
+        const combined = [
+            ...(campaign || []),
+            ...(deletedCampaign || [])
+        ];
+        
+        // Remove duplicates (if any)
+        const uniqueCampaigns = combined.filter(
+            (c, index, self) => 
+            index === self.findIndex((t) => t.id === c.id)
+        );
+        
+        setCampaigns(uniqueCampaigns);
+    }, [campaign, deletedCampaign]);
 
     // Current timestamp (in seconds)
     const currentTimestamp = Math.floor(Date.now() / 1000);
@@ -73,17 +71,18 @@ export default function AdminPage() {
           return (
             campaign.approved === true &&
             campaign.fundsReleased === false &&
-            Number(campaign.targetDate) <= currentTimestamp &&
+            Number(campaign.targetDate) <= currentTimestamp && 
+            !campaign.isDeleted &&
             matchesSearch
           );
         } if (selectedTab === "rejected") {
-            return campaign.status === 2 && matchesSearch;
+            return campaign.status === 2 && !campaign.isDeleted && matchesSearch;
         } if (selectedTab === "open") {
-            return campaign.approved === true && campaign.fundsReleased === false && matchesSearch;
+            return campaign.approved === true && campaign.fundsReleased === false && !campaign.isDeleted && matchesSearch;
         } if (selectedTab === "closed") {
-            return (campaign.approved === false && campaign.status === 0) && matchesSearch;
+            return (campaign.approved === false && campaign.status === 0) && !campaign.isDeleted && matchesSearch;
         } if (selectedTab === "funded") {
-            return campaign.fundsReleased === true && matchesSearch;
+            return campaign.fundsReleased === true && !campaign.isDeleted && matchesSearch;
         }  
         return false;
     });

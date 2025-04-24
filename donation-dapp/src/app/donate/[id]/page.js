@@ -408,7 +408,7 @@ export default function DetailsPage () {
                                             ? <> </>
                                             : <button 
                                             onClick={handleApproveConfirmation}
-                                            className='font-bold px-3 py-3 bg-[var(--sblue)] whitespace-nowrap text-black rounded-lg md:w-[25vw] cursor-pointer hover:bg-[var(--bold-blue)]'
+                                            className='font-bold px-3 py-3 bg-[var(--sblue)] whitespace-nowrap text-black rounded-lg md:w-[25vw] cursor-pointer hover:bg-[var(--light-blue)]'
                                             disabled={isApproving}
                                             >
                                             {isApproving ? "Approving..." : "Approve Campaign"}
@@ -444,7 +444,7 @@ export default function DetailsPage () {
                             </button>
                             <button
                             onClick={handleReject}
-                            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-[#cf3c3e]"
+                            className="px-6 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-[#cf3c3e]"
                             >
                             Reject
                             </button>
@@ -471,7 +471,7 @@ export default function DetailsPage () {
                             </button>
                             <button
                             onClick={handleApprove}
-                            className="px-6 py-2 bg-[var(--sblue)] text-black rounded-lg hover:bg-[var(--bold-blue)]"
+                            className="px-6 py-2 bg-[var(--sblue)] text-black font-semibold rounded-lg hover:bg-[var(--light-blue)]"
                             >
                             Approve
                             </button>

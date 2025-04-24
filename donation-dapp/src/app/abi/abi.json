@@ -21,7 +21,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "campaignId",
 				"type": "uint256"
@@ -34,13 +34,13 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "campaignId",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "organization",
 				"type": "address"
@@ -65,7 +65,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "campaignId",
 				"type": "uint256"
@@ -78,7 +78,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "campaignId",
 				"type": "uint256"
@@ -97,7 +97,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "campaignId",
 				"type": "uint256"
@@ -186,7 +186,7 @@
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "donor",
 				"type": "address"
@@ -205,7 +205,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "campaignId",
 				"type": "uint256"
@@ -218,44 +218,6 @@
 			}
 		],
 		"name": "FundsReleased",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "campaignId",
-				"type": "uint256"
-			}
-		],
-		"name": "MilestoneAchieved",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "campaignId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "donor",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "RefundIssued",
 		"type": "event"
 	},
 	{
@@ -665,6 +627,91 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getDeletedCampaigns",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address payable",
+						"name": "organization",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "targetAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "targetDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "raisedAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "imageUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "fundsReleased",
+						"type": "bool"
+					},
+					{
+						"internalType": "string",
+						"name": "milestoneIPFSHash",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "approved",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "closedForFunding",
+						"type": "bool"
+					},
+					{
+						"internalType": "enum Donation.CampaignStatus",
+						"name": "status",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "isDeleted",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct Donation.CampaignView[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -672,7 +719,7 @@
 				"type": "address"
 			}
 		],
-		"name": "getDoantedCampaigns",
+		"name": "getDonatedCampaigns",
 		"outputs": [
 			{
 				"components": [

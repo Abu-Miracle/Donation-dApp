@@ -254,7 +254,7 @@ export default function NewCampaign() {
                         </div>
                     </div>
 
-                    <button type="submit" className="bg-[var(--sblue)] text-black py-4 px-6 font-bold text-lg rounded-lg md:rounded-2xl hover:bg-[var(--light-blue)] block mx-auto mt-10 md:mt-16">
+                    <button type="submit" className="bg-[var(--sblue)] text-black py-4 px-6 font-bold text-lg rounded-lg md:rounded-2xl hover:bg-[var(--light-blue)] cursor-pointer block mx-auto mt-10 md:mt-16">
                     {uploading ? 'Uploading...' : 'Submit New Campaign'}
                     </button>
 

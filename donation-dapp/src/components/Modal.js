@@ -68,7 +68,7 @@ export function Modal({ isOpen, onClose, txHash, status = "donating", campaignNa
         <div className="flex justify-end gap-4">
           {status === "donating" && txHash && (
             <button
-              className="bg-[var(--sblue)] text-black px-4 py-2 rounded-lg cursor-pointer font-semibold hover:bg-[var(--bold-blue)] transition-colors"
+              className="bg-[var(--sblue)] text-black px-4 py-2 rounded-lg cursor-pointer font-semibold hover:bg-[var(--light-blue)] transition-colors"
               onClick={() => window.location.href = '/donate'}
             >
               Browse More
