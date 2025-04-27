@@ -292,10 +292,12 @@ export default function AdminPage() {
                                     </p>
                                 </div>
                             </div>
-
-                            <Link href={`/donate/${campaign.id}`}>
+                            
+                            {campaign.isDeleted 
+                            ? <p className='text-red-600 font-bold'>Deleted</p>
+                            : <Link href={`/donate/${campaign.id}`}>
                                 <button className="text-[var(--sblue)] ml-3 md:mx-0 mt-2 text-[14px] whitespace-nowrap flex cursor-pointer">See <span className='hidden md:block mx-1'>full</span> details</button>
-                            </Link>
+                            </Link>}
                         </div>
                     </div>
                 </div>
