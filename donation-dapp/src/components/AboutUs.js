@@ -4,7 +4,7 @@ export default function AboutUs() {
             <div className="flex md:flex-row flex-col w-full h-full min-h-[400px] lg:h-[460px] shadow-lg shadow-[#0e0e0e] rounded-3xl transition-transform duration-300 hover:scale-102 mb-10 md:border-none border border-[#1e1e1e]">
                 
                 <div className="w-full md:w-[50%] h-[300px] md:h-auto relative overflow-hidden rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none group">
-                    <div className="absolute inset-0 bg-[url('/stock1.jpg')] bg-cover bg-top md:bg-center transition-transform duration-300 ease-in-out group-hover:scale-110">
+                    <div className="absolute inset-0 bg-[url('/stock1.jpg')] bg-cover bg-top transition-transform duration-300 ease-in-out group-hover:scale-110">
                         <div className="w-full h-full bg-gradient-to-b from-black/20 to-black/80 flex items-center px-10">
                             <h2 className="text-[32px] md:text-[42px] font-black text-white relative z-10">
                                 ABOUT US
