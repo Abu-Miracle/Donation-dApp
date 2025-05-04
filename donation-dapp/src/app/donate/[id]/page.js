@@ -1,6 +1,7 @@
 'use client';
 
 import Navbar from '../../../components/Navbar';
+import Footer from '../../../components/Footer';
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useReadContract, useWriteContract, useAccount } from 'wagmi';
@@ -250,6 +251,7 @@ export default function DetailsPage () {
     </div>;
 
     return(
+        <>
         <div className='min-h-screen bg-black'>
             <Navbar />
             
@@ -563,5 +565,7 @@ export default function DetailsPage () {
             </div>
  
         </div>
+        <Footer />
+        </>
     );
 }

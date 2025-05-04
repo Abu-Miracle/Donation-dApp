@@ -1,6 +1,7 @@
 'use client';
 
 import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useReadContract,useAccount } from 'wagmi';
@@ -84,6 +85,7 @@ export default function DonationHiistory() {
 
 
     return(
+        <>
         <div className="min-h-screen bg-black pb-0 md:pb-14">
             <Navbar />
 
@@ -159,5 +161,7 @@ export default function DonationHiistory() {
                 </div>
             </div>
         </div>
+        <Footer />
+        </>
     );
 }

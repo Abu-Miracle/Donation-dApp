@@ -22,7 +22,8 @@ export default function Mission() {
                     </div>
                 </div>
 
-                <div className="group relative overflow-hidden rounded-full shadow-lg shadow-[#3CA8CF]/30 w-80 h-40">
+                <div className="group relative overflow-hidden rounded-full shadow-lg shadow-[#3CA8CF]/30 w-80 h-40 mb-10 md:mb-0">
+
                     <div className="absolute inset-0 bg-[url('/stock5.jpg')] bg-cover bg-center transition-transform duration-300 ease-in-out group-hover:scale-110 rounded-full" />
 
                     <div className="w-full h-full bg-gradient-to-b from-transparent from-20% to-black flex flex-col items-start justify-end px-10 pb-4 relative z-10">
@@ -34,6 +35,8 @@ export default function Mission() {
                         </p>
                     </div>
                 </div>
+
+                
             </div>
             
             <div className="flex flex-col md:flex-row justify-center items-center md:space-x-16 mt-10">

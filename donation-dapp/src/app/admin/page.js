@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useReadContract } from 'wagmi';
 import abi from "../abi/abi.json";
 import Navbar from '../../components/Navbar';
+import Footer from '../..//components/Footer';
 import { ethers } from 'ethers';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -114,6 +115,7 @@ export default function AdminPage() {
     }
 
     return(
+        <>
         <div className="min-h-screen bg-black">
             <Navbar />
 
@@ -304,5 +306,7 @@ export default function AdminPage() {
                 ))}
             </div>
         </div>
+        <Footer />
+        </>
     );
 }

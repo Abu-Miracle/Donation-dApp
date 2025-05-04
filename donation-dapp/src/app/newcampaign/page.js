@@ -1,6 +1,7 @@
 'use client';
 
 import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 import { useWriteContract } from 'wagmi';
 import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
@@ -114,6 +115,7 @@ export default function NewCampaign() {
     // 1745107200
       
     return(
+        <>
         <div className="min-h-screen bg-black md:pb-20">
             <Navbar />
 
@@ -261,5 +263,7 @@ export default function NewCampaign() {
                 </form>
             </div>
         </div>
+        <Footer />
+        </>
     );
 }

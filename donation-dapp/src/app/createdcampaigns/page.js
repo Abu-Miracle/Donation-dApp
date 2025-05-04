@@ -1,6 +1,7 @@
 'use client';
 
 import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 import "../globals.css";
 import { useState, useEffect } from 'react';
 import { useReadContract, useWriteContract, useAccount } from 'wagmi';
@@ -111,6 +112,7 @@ export default function CreatedCampaigns() {
 
 
     return(
+        <>
         <div className="min-h-screen bg-black">
             <Navbar />
 
@@ -292,5 +294,7 @@ export default function CreatedCampaigns() {
             )}
 
         </div>
+        <Footer />
+        </>
     );
 }
