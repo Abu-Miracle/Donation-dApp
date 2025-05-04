@@ -31,13 +31,19 @@ export default function TopCampaigns() {
         <div className="md:min-h-[70vh] bg-[var(--bold-blue)] py-10 relative">
             <h1 className="font-black text-white text-3xl mb-6 md:mb-8 px-10">Our Top Campaigns</h1>
 
-            {!isConnected && (<div className='absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-black/50 z-10'>
-                <p className='text-white text-lg font-semibold text-center'>Please connect an Ethereum wallet to view campaigns</p>
+            {!isConnected && (<div className='absolute inset-0 flex items-center justify-center bg-black/50 z-10'>
+                <p className='text-white text-lg font-semibold text-center'>Please connect an Ethereum wallet to view our top campaigns</p>
             </div>)}
 
-            {isLoading && isConnected && (<div className="absolute inset-0 flex items-center justify-center backdrop-blur-xs bg-black/50 z-10">
+            {isLoading && isConnected && (<div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
                 <p className="text-white text-lg font-semibold text-center">
-                    Please connect an Ethereum wallet to view top campaigns
+                   Loading Campaigns...
+                </p>
+            </div>)}
+
+            {isError && isConnected && (<div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+                <p className="text-white text-lg font-semibold text-center">
+                    Error Loading Campaigns
                 </p>
             </div>)}
 
@@ -99,12 +105,14 @@ export default function TopCampaigns() {
                     })}
                     </div>
                 </div>
-
-                <div className="flex justify-end">
+                
+                {isConnected 
+                ? <div className="flex justify-end">
                     <Link href="/donate" className='mt-4 text-white font-medium underline underline-offset-2 font-sans px-10'>
                         Browse More
                     </Link>
                 </div>
+                : <></>}
             </div>
         </div>
     );
