@@ -3,18 +3,25 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const pathname = usePathname();
   const { address, isConnected } = useAccount();
   const adminAddress = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
   const isAdmin = isConnected && address?.toLowerCase() === adminAddress?.toLowerCase();
 
   // Define the common navigation items for regular users.
   const navLinks = ['Home', 'Created Campaigns', 'Donation History'];
+
+  // Function to determine if a link is active
+  const isActive = (href) => {
+    if (href === '/') return pathname === href;
+    return pathname.startsWith(href);
+  };
 
   return (
     <nav className="relative flex justify-between items-center pt-7 px-6 pb-4 xl:px-16 bg-transparent text-white ">
@@ -34,20 +41,26 @@ export default function Navbar() {
 
       {/* Desktop Navigation */}
       <div className="hidden lg:flex items-center gap-3 xl:gap-6">
-        {navLinks.map((item, index) => (
-          <Link
-            key={index}
-            href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`}
-            className="text-sm font-semibold hover:text-[var(--sblue)] transition-all duration-300 hover:scale-105"
-          >
-            {item}
-          </Link>
-        ))}
-        {/* Conditionally render the Admin link if the connected user is admin */}
+        {navLinks.map((item, index) => {
+          const href = item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`;
+          return (
+            <Link
+              key={index}
+              href={href}
+              className={`text-[15px] font-semibold duration-100 transition-all cursor-pointer hover:scale-105 ${
+                isActive(href) ? 'text-[var(--sblue)]' : 'hover:text-white'
+              }`}
+            >
+              {item}
+            </Link>
+          );
+        })}
         {isAdmin && (
           <Link
             href="/admin"
-            className="text-sm font-semibold hover:text-[var(--sblue)] transition-all duration-300 hover:scale-105"
+            className={`text-[15px] font-semibold duration-100 transition-all cursor-pointer hover:scale-105 ${
+              pathname === '/admin' ? 'text-[var(--sblue)]' : 'hover:text-white'
+            }`}
           >
             Admin
           </Link>
@@ -80,20 +93,27 @@ export default function Navbar() {
 
           {/* Menu */}
           <div className="fixed top-16 left-0 w-full bg-black z-50 py-6 shadow-lg flex flex-col items-center gap-6">
-            {navLinks.map((item, index) => (
-              <Link
-                key={index}
-                href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`}
-                className="text-sm font-semibold text-white hover:text-[var(--sblue)]"
-                onClick={() => setMenuOpen(false)}
-              >
-                {item}
-              </Link>
-            ))}
+            {navLinks.map((item, index) => {
+              const href = item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`;
+              return (
+                <Link
+                  key={index}
+                  href={href}
+                  className={`text-sm font-semibold ${
+                    isActive(href) ? 'text-[var(--sblue)]' : 'text-white hover:text-[var(--sblue)]'
+                  }`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item}
+                </Link>
+              );
+            })}
             {isAdmin && (
               <Link
                 href="/admin"
-                className="text-sm font-semibold text-white hover:text-[var(--sblue)]"
+                className={`text-sm font-semibold ${
+                  pathname === '/admin' ? 'text-[var(--sblue)]' : 'text-white hover:text-[var(--sblue)]'
+                }`}
                 onClick={() => setMenuOpen(false)}
               >
                 Admin
@@ -105,4 +125,3 @@ export default function Navbar() {
     </nav>
   );
 }
-

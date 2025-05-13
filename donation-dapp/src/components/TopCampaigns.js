@@ -14,16 +14,21 @@ export default function TopCampaigns() {
     })
     const { address, isConnected } = useAccount();
 
-    const topThree = useMemo(() => {
+    const topFour = useMemo(() => {
         if (!allCampaigns) return []
+        const nowSec = Math.floor(Date.now() / 1000);
         return [...allCampaigns]
-          .filter(c => c.approved && !c.isDeleted)
+          .filter(c => 
+            c.approved && 
+            !c.isDeleted &&
+            Number(c.targetDate) > nowSec
+            )
           .sort(
             (a, b) =>
               Number(ethers.formatEther(b.raisedAmount)) -
               Number(ethers.formatEther(a.raisedAmount))
           )
-          .slice(0, 3)
+          .slice(0, 4)
     }, [allCampaigns])
 
 
@@ -48,10 +53,10 @@ export default function TopCampaigns() {
             </div>)}
 
             <div>
-                <div id="editModal" className="overflow-x-auto mx-10">
+                <div id="editModal" className="overflow-x-auto mx-5">
                     <div className="min-w-[800px] flex flex-row space-x-8 items-center">
 
-                    {topThree.map((camp) => {
+                    {topFour.map((camp) => {
                     const raised = ethers.formatEther(camp.raisedAmount)
                     const target = ethers.formatEther(camp.targetAmount)
                     return (
