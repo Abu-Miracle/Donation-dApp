@@ -198,9 +198,9 @@ export default function AdminPage() {
         <div className="min-h-screen bg-black pb-10">
             <Navbar />
 
-            <h1 className="text-[28px] mt-16 font-black text-white mx-30">Admin Dashboard</h1>
+            <h1 className="text-3xl mt-16 font-black text-center flex md:text-left text-white mx-30">Admin Dashboard</h1>
             
-            <p className='mx-30 mt-8 text-white flex flex-col'> 
+            <p className='mx-10 md:mx-30 mt-8 text-white flex flex-col'> 
                 <span className="text-[18px] text-[#747474] font-semibold">Contract Balance</span>
                 <span className='font-bold text-2xl mt-2'>
                 {contractBalance ? 
@@ -210,18 +210,18 @@ export default function AdminPage() {
                 </span>
             </p>
 
-            <div className='mt-7 grid grid-cols-1 md:grid-cols-3 space-x-6 px-30 '>
+            <div className='mt-7 grid grid-cols-1 space-y-8 md:space-y-0  md:grid-cols-3 spaxe-x-0 md:space-x-6 px-10 md:px-30 '>
                 <div className='bg-[var(--dark-gray)] flex flex-col px-6 py-8 space-y-4 border-l-4 border-[var(--bold-blue)]'>
                     <h1 className='font-semibold text-[18px] text-[#747474]'>Pending Approvals</h1>
-                    <p className='font-bold text-2xl text-white'>{pendingApprovals}</p>
+                    <p className='font-bold text-3xl text-white'>{pendingApprovals}</p>
                 </div>
                 <div className='bg-[var(--dark-gray)] flex flex-col px-6 py-8 space-y-4 border-l-4 border-[var(--bold-blue)]'>
                     <h1 className='font-semibold text-[18px] text-[#747474]'>Approved Campaigns</h1>
-                    <p className='font-bold text-2xl text-white'>{approvedCampaigns}</p>
+                    <p className='font-bold text-3xl text-white'>{approvedCampaigns}</p>
                 </div>
                 <div className='bg-[var(--dark-gray)] flex flex-col px-6 py-8 space-y-4 border-l-4 border-[var(--bold-blue)]'>
                     <h1 className='font-semibold text-[18px] text-[#747474]'>Funded Campaigns</h1>
-                    <p className='font-bold text-2xl text-white'>{fundedCampaigns}</p>
+                    <p className='font-bold text-3xl text-white'>{fundedCampaigns}</p>
                 </div>
             </div>
 
@@ -266,7 +266,7 @@ export default function AdminPage() {
                                 </p>
                             ) : (
                                 paginatedDonations.map((donation, index) => (
-                                    <div key={index} className='flex flex-row justify-between text-sm border-b border-[#1E1E1E] last-of-type:border-b-0 text-white px-10 lg:px-14 py-6 font-bold hover:bg-[#0E0E0E] whitespace-nowrap'>
+                                    <div key={index} className='flex flex-row justify-between text-sm border-b border-[#1E1E1E] last-of-type:border-b-0 text-white px-10 lg:px-14 py-6 font-bold whitespace-nowrap'>
                                         <div className='min-w-[180px] text-left text-[#747474]'>
                                             {`${donation.donor.slice(0, 10)}...${donation.donor.slice(-4)}`}
                                         </div>
