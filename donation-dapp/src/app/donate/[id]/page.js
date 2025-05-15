@@ -560,7 +560,7 @@ export default function DetailsPage () {
                     "donating"
                 }
                 campaignName={campaign?.name}
-                raisedAmount={Number(campaign?.raisedAmount)}
+                raisedAmount={campaign?.raisedAmount}
                 />
             </div>
  
