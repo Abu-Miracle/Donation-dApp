@@ -180,9 +180,13 @@ export default function CreatedCampaigns() {
                             <div className="absolute top-2 left-2 font-bold text-[var(--sblue)] p-1 ">
                                 Open
                             </div>
-                        ) : (
+                        ) : (campaign.status === 2) ? (
                             <div className="absolute top-0 left-0 w-full rounded-t-xl h-52 p-3 bg-black/50 font-bold text-red-500">
                                 Rejected
+                            </div>
+                        ) : (
+                            <div className="absolute top-0 left-0 w-full rounded-t-xl h-52 p-3 bg-black/50 font-bold text-[var(--sblue)]">
+                                Pending fund release
                             </div>
                         )}
                     </div>
@@ -206,21 +210,34 @@ export default function CreatedCampaigns() {
                         </div>
 
                         <div className='mb-6 flex flex-row justify-between items-center'>
+                            {campaign.fundsReleased ? 
+                            <>
+                             <div>
+                                <p className="text-white text-[16px] font-bold">Campaign Funded</p>
+                            </div>
+                             <div className='flex flex-col items-center'>
+                                <p className="text-white font-bold text-[18px]">--</p>
+                                <p className="text-[#747474] text-[14px]">days left</p>
+                            </div>
+                            </>
+                            :
+                            <>
                             <div>
                                 <p className="text-white font-bold text-[18px]"> {ethers.formatEther(campaign.raisedAmount)} ETH</p>
                                 <p className="text-[#747474] text-[14px]">Raised of {ethers.formatEther(campaign.targetAmount)} ETH</p>
                             </div>
-
                             <div className='flex flex-col items-center'>
                                 {(daysLeft(campaign.targetDate) >= 0) ? 
-                                    <>
-                                        <p className="text-white font-bold text-[18px]">{daysLeft(campaign.targetDate)}</p>
-                                        <p className="text-[#747474] text-[14px]">days left</p>
-                                    </>
-                                    :
-                                    <p className="text-white font-normal text-[14px]">Date Passed</p>
+                                <>
+                                    <p className="text-white font-bold text-[18px]">{daysLeft(campaign.targetDate)}</p>
+                                    <p className="text-[#747474] text-[14px]">days left</p>
+                                </>
+                                :
+                                <p className="text-white font-normal text-[14px]">Date Passed</p>
                                 }
                             </div>
+                            </>
+                            }
                         </div>
 
                         <div className='flex flex-row justify-between items-center xl:flex-row xl:justify-between'>

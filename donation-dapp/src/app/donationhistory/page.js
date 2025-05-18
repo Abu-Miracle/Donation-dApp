@@ -118,7 +118,7 @@ export default function DonationHiistory() {
                 <div className='overflow-x-auto'>
                     <div className="min-w-[800px]">
                         <div className='bg-black md:bg-[#1E1E1E] flex flex-row justify-between text-sm text-white mt-10 px-10 md:px-14  py-6 font-bold'>
-                            <div className='min-w-[300px] text-left'>CAMPAIGN NAME</div>
+                            <div className='min-w-[350px] text-left'>CAMPAIGN NAME</div>
                             <div className='min-w-[180px] text-left'>TRANSACTION HASH</div>
                             <div className='min-w-[100px] text-center'>AMOUNT</div>
                             <div className='min-w-[100px] text-center'>DATE</div>
@@ -133,7 +133,7 @@ export default function DonationHiistory() {
                         ) : (
                             filteredDonations.map((donation, index) => (
                                 <div key={index} className='flex flex-row justify-between text-sm border-b border-[#1E1E1E] last-of-type:border-b-0 last-of-type:rounded-b-xl text-white px-10 lg:px-14 py-6 font-bold hover:bg-[#0E0E0E] whitespace-nowrap'>
-                                    <div className='min-w-[300px] text-left'>{donation.campaignName}</div>
+                                    <div className='min-w-[350px] text-left'>{donation.campaignName}</div>
                                     <div className='min-w-[180px] text-left'>
                                         <Link 
                                             href={`https://sepolia.etherscan.io/tx/${donation.txHash}`}

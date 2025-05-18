@@ -252,7 +252,7 @@ export default function AdminPage() {
                         <div className="min-w-[800px]">
                             <div className='bg-black md:bg-[#1E1E1E] flex flex-row justify-between text-sm text-white px-10 md:px-14 py-6 font-bold'>
                                 <div className='min-w-[180px] text-left'>SENDER'S ADDRESS</div>
-                                <div className='min-w-[300px] text-left'>CAMPAIGN NAME</div>
+                                <div className='min-w-[350px] text-left'>CAMPAIGN NAME</div>
                                 <div className='min-w-[180px] text-left'>TRANSACTION HASH</div>
                                 <div className='min-w-[100px] text-center'>AMOUNT</div>
                                 <div className='min-w-[100px] text-center'>DATE</div>
@@ -270,7 +270,7 @@ export default function AdminPage() {
                                         <div className='min-w-[180px] text-left text-[#747474]'>
                                             {`${donation.donor.slice(0, 10)}...${donation.donor.slice(-4)}`}
                                         </div>
-                                        <div className='min-w-[300px] text-left'>{donation.campaignName}</div>
+                                        <div className='min-w-[350px] text-left'>{donation.campaignName}</div>
                                         <div className='min-w-[180px] text-left'>
                                             <Link 
                                                 href={`https://sepolia.etherscan.io/tx/${donation.txHash}`}

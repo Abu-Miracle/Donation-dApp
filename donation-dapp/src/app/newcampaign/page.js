@@ -255,6 +255,7 @@ export default function NewCampaign() {
                             }
                         </div>
                     </div>
+                    <p className='text-[#747474] mt-3 font-semibold'>Please ensure to add contact details in your milestone document</p>
 
                     <button type="submit" className="bg-[var(--sblue)] text-black py-4 px-6 font-bold text-lg rounded-lg md:rounded-2xl hover:bg-[var(--light-blue)] cursor-pointer block mx-auto mt-10 md:mt-16">
                     {uploading ? 'Uploading...' : 'Submit New Campaign'}
