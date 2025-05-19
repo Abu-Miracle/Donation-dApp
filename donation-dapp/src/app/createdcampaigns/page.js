@@ -176,7 +176,7 @@ export default function CreatedCampaigns() {
                             <div className="absolute top-0 left-0 w-full rounded-t-xl h-52 p-3 bg-black/50 font-bold text-amber-300">
                                 Pending Approval
                             </div>
-                        ) : (campaign.status === 1) ? (
+                        ) : (campaign.status === 1) && (daysLeft(campaign.targetDate) > 0) ? (
                             <div className="absolute top-2 left-2 font-bold text-[var(--sblue)] p-1 ">
                                 Open
                             </div>

@@ -31,7 +31,7 @@ export default function Donate() {
     console.log(campaign);
 
     const filteredCampaigns = campaigns.filter((campaign) => {
-        const matchesTab = selectedTab === "open" ? (campaign.approved && campaign.fundsReleased === false) : !campaign.approved && campaign.status !== 2;
+        const matchesTab = selectedTab === "open" ? (campaign.approved && (daysLeft(campaign.targetDate) > 0) && campaign.fundsReleased === false) : !campaign.approved && campaign.status !== 2;
         const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesTab && matchesSearch;
     });
