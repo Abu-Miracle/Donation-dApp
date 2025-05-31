@@ -144,7 +144,7 @@ export default function AdminPage() {
         } if (selectedTab === "rejected") {
             return campaign.status === 2 && !campaign.isDeleted && matchesSearch;
         } if (selectedTab === "open") {
-            return campaign.approved === true && campaign.fundsReleased === false && !campaign.isDeleted && matchesSearch;
+            return campaign.approved === true && campaign.fundsReleased === false && daysLeft(campaign.targetDate) > 0 && !campaign.isDeleted && matchesSearch;
         } if (selectedTab === "closed") {
             return (campaign.approved === false && campaign.status === 0) && !campaign.isDeleted && matchesSearch;
         } if (selectedTab === "funded") {
