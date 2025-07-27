@@ -39,7 +39,7 @@ Before running this project, make sure you have:
 ```bash
 git clone https://github.com/Abu-Miracle/Donation-dApp.git
 cd Donation-dApp
-
+```
 
 2. Install dependencies:
 ```bash
