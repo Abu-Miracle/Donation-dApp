@@ -1,4 +1,4 @@
-import { PinataSDK } from 'pinata';
+import { PinataSDK } from "pinata";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT, // Ensure this is set in your environment

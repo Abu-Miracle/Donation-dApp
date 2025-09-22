@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 
 const CampaignOptions = ({ isApproved, onEdit, onDelete, onViewDetails }) => {
   const [open, setOpen] = useState(false);
@@ -11,9 +11,9 @@ const CampaignOptions = ({ isApproved, onEdit, onDelete, onViewDetails }) => {
         setOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 

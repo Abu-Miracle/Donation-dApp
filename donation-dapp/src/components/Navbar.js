@@ -1,25 +1,26 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount } from 'wagmi';
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const { address, isConnected } = useAccount();
   const adminAddress = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
-  const isAdmin = isConnected && address?.toLowerCase() === adminAddress?.toLowerCase();
+  const isAdmin =
+    isConnected && address?.toLowerCase() === adminAddress?.toLowerCase();
 
   // Define the common navigation items for regular users.
-  const navLinks = ['Home', 'Created Campaigns', 'Donation History'];
+  const navLinks = ["Home", "Created Campaigns", "Donation History"];
 
   // Function to determine if a link is active
   const isActive = (href) => {
-    if (href === '/') return pathname === href;
+    if (href === "/") return pathname === href;
     return pathname.startsWith(href);
   };
 
@@ -42,13 +43,14 @@ export default function Navbar() {
       {/* Desktop Navigation */}
       <div className="hidden lg:flex items-center gap-3 xl:gap-6">
         {navLinks.map((item, index) => {
-          const href = item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`;
+          const href =
+            item === "Home" ? "/" : `/${item.toLowerCase().replace(/\s/g, "")}`;
           return (
             <Link
               key={index}
               href={href}
               className={`text-[15px] font-semibold duration-100 transition-all cursor-pointer hover:scale-105 ${
-                isActive(href) ? 'text-[var(--sblue)]' : 'hover:text-white'
+                isActive(href) ? "text-[var(--sblue)]" : "hover:text-white"
               }`}
             >
               {item}
@@ -59,7 +61,7 @@ export default function Navbar() {
           <Link
             href="/admin"
             className={`text-[15px] font-semibold duration-100 transition-all cursor-pointer hover:scale-105 ${
-              pathname === '/admin' ? 'text-[var(--sblue)]' : 'hover:text-white'
+              pathname === "/admin" ? "text-[var(--sblue)]" : "hover:text-white"
             }`}
           >
             Admin
@@ -76,8 +78,18 @@ export default function Navbar() {
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         </button>
       </div>
@@ -94,13 +106,18 @@ export default function Navbar() {
           {/* Menu */}
           <div className="fixed top-16 left-0 w-full bg-black z-50 py-6 shadow-lg flex flex-col items-center gap-6">
             {navLinks.map((item, index) => {
-              const href = item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s/g, '')}`;
+              const href =
+                item === "Home"
+                  ? "/"
+                  : `/${item.toLowerCase().replace(/\s/g, "")}`;
               return (
                 <Link
                   key={index}
                   href={href}
                   className={`text-sm font-semibold ${
-                    isActive(href) ? 'text-[var(--sblue)]' : 'text-white hover:text-[var(--sblue)]'
+                    isActive(href)
+                      ? "text-[var(--sblue)]"
+                      : "text-white hover:text-[var(--sblue)]"
                   }`}
                   onClick={() => setMenuOpen(false)}
                 >
@@ -112,7 +129,9 @@ export default function Navbar() {
               <Link
                 href="/admin"
                 className={`text-sm font-semibold ${
-                  pathname === '/admin' ? 'text-[var(--sblue)]' : 'text-white hover:text-[var(--sblue)]'
+                  pathname === "/admin"
+                    ? "text-[var(--sblue)]"
+                    : "text-white hover:text-[var(--sblue)]"
                 }`}
                 onClick={() => setMenuOpen(false)}
               >
