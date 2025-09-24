@@ -77,7 +77,7 @@ export default function Mission() {
       </div>
 
       <Link href="/donate">
-        <button className="bg-[var(--sblue)] block mx-auto text-black rounded-full text-lg py-3 px-10 cursor-pointer hover:bg-[var(--light-blue)] font-black">
+        <button className="bg-[var(--sblue)] block mx-auto text-black rounded-full text-lg py-3 px-10 cursor-pointer hover:bg-[var(--light-blue)] inset-shadow-sm inset-shadow-black shadow-lg shadow-[#3ca8cf]/50 font-black">
           Donate Now
         </button>
       </Link>
