@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "BlockFund",
-  description: "A blockchain-based donation system",
+  description: "A blockchain-based donation system. This donation dApp enables transparent and secure donations using smart contracts.",
 };
 
 export default function RootLayout({ children }) {
